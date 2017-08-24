@@ -1,0 +1,408 @@
+************************************************************************************************************************************
+***                                                                                                                              ***
+*** Elements Version 8.00p (x86) - 24.08.17 02:10                                                                                ***
+*** Platform: Windows 10                                                                                                         ***
+*** Architecture: x64                                                                                                            ***
+*** Serial Number:                                                                                                               ***
+*** User:                                                                                                                        ***
+***                                                                                                                              ***
+*** TITLE:   * \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\1.2 - zuyev - dual slope adc - ideal opamp.wxsch***
+*** NETLIST: \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\design.net                                        ***
+***                                                                                                                              ***
+************************************************************************************************************************************
+
+********************************************************************************
+***                                                                          ***
+***                                Input Deck                                ***
+***                                                                          ***
+********************************************************************************
+
+#SIMETRIX
+X1 Vbias S1_N Vdd Vss S1_P PARAM_OPAMP params: VOS=0 IB=100n IBOS=1n A0=100k GBW=1Meg SR_POS=1Meg SR_NEG=1Meg CMRR=100k PSRR=100k RIN=1Meg ROUT=100 IQ=1m VDIFF_POS=0 VDIFF_NEG=0 VOFF_TOL=0 pinnames: inp inn vsp vsn out
+V1 Vdd 0 5
+X2 Vbias S1_P Vdd Vss cmp-out PARAM_OPAMP params: VOS=0 IB=100n IBOS=1n A0=100k GBW=1Meg SR_POS=1Meg SR_NEG=1Meg CMRR=100k PSRR=100k RIN=1Meg ROUT=100 IQ=1m VDIFF_POS=0 VDIFF_NEG=0 VOFF_TOL=0 pinnames: inp inn vsp vsn out
+V2 Vss 0 -5
+X3 Vbias R3_P Vdd Vss X3_out PARAM_OPAMP params: VOS=0 IB=100n IBOS=1n A0=100k GBW=1Meg SR_POS=1Meg SR_NEG=1Meg CMRR=100k PSRR=100k RIN=1Meg ROUT=100 IQ=1m VDIFF_POS=0 VDIFF_NEG=0 VOFF_TOL=0 pinnames: inp inn vsp vsn out
+R1 S1_N X3_out 10k
+V3 Vbias 0 0
+R2 X3_out R3_P 1K
+V4 Vref 0 -1
+R3 R3_P S2_P 1K
+X$V5 Vin 0 TRI_SOURCE pinnames: P N params: _V1=0 _V2=4 _FREQ=10 _DELAY=0 _DRATIOx100=50 _T_RISE=50m _T_FALL=50m _DAMP_COEF=0 _PWIDTH=0 _OFF_UNTIL_DELAY=0 _IDLE_IN_POP=0 _USEPHASE=0 _PHASE=0
+R4 R4_P Vin 3k
+X$ARB1 Vin dac-out ARB1_OUT $$arbsourceARB1 pinnames: vin dac-out OUT 
+.subckt $$arbsourceARB1 vin dac-out OUT 
+B$OUT OUT 0 V=V(Vin)-V(dac-out) 
+.ends
+A$U10 DEINT S2_CP HC04D
+A$U1 [CLK_pin_1] [BUS1#0 BUS1#1 BUS1#2 BUS1#3 BUS1#4 BUS1#5 BUS1#6 BUS1#7 DEINT RST] $$CounterU1 
+.model $$CounterU1 d_logic_block file=$$counterU1 user=[10n]
+.file $$counterU1 
+X$S1 S1_P S1_N RST 0 gen_switch : RON=1  ROFF=1Meg VON=3  VOFF=2  pinnames: P N CP CN
+A$U2 [BUS1#0 BUS1#1 BUS1#2 BUS1#3 BUS1#4 BUS1#5 BUS1#6 BUS1#7 cmp-out] [BUS2#0 BUS2#1 BUS2#2 BUS2#3 BUS2#4 BUS2#5 BUS2#6 BUS2#7] $$RegisterU2 
+.model $$RegisterU2 d_logic_block file=$$registerU2 user=[5n,20n] 
+.file $$registerU2 
+X$S2 S2_P R4_P S2_CP 0 gen_switch : RON=1  ROFF=1Meg VON=3  VOFF=2  pinnames: P N CP CN
+X$S3 S2_P Vref DEINT 0 gen_switch : RON=1  ROFF=1Meg VON=3  VOFF=2  pinnames: P N CP CN
+A$U7 [BUS2#0 BUS2#1 BUS2#2 BUS2#3 BUS2#4 BUS2#5 BUS2#6 BUS2#7] dac-out $$DACU7 
+.model $$DACU7 DA_Converter 
++ output_slew_time=1e-007 
++ output_range=4 output_offset=2 
+C2 S1_P S1_N 100n IC=0  BRANCH={IF(ANALYSIS=2,1,0)}
+A$CLK CLK_pin_1 CLK$TP_DPULSE : Period=16u width=8u delay=0 
+.model CLK$TP_DPULSE d_pulse period=1u min_sink=-0.02 max_source=0.02
+.GRAPH dac-out axisType="auto" persistence=-1 curveLabel="dac-out" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH cmp-out axisType="digital" persistence=-1 curveLabel="cmp-out" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH Vin curveLabel= Vin nowarn=true ylog=auto xlog=auto analysis=tran|ac|dc disabled=false 
+.GRAPH S1_P axisType="auto" persistence=-1 curveLabel="int-out" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH ARB1_OUT axisType="grid" persistence=-1 curveLabel="DIFF" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH RST axisType="digital" persistence=-1 curveLabel="RST" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH DEINT axisType="digital" persistence=-1 curveLabel="DEINT" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH "ComposeDigital('BUS2', [-1, -1],  ''  , '%BUSNAME%#%WIRENUM%'  , [0.8, 0.9] )*1.0+0" complete=true  axistype=digital   bus=dec curveLabel="adc-out" disabled=false 
+.KEEP ^BUS2#*
+.TRAN 100m
+.OPTIONS minTimeStep=1f
++  conv=2
++  abstol=1n
+.subckt gen_switch 1 2 3 4
+S1 1 2 3 4 SW 
+.model SW VSWITCH RON={ron} ROFF={roff} VON={von} VOFF={voff} 
+.ends 
+********************************************************************************
+**
+** Timed switch - this is a comprehensive model with all features.
+** Uses new built-in timed switch model. Needs v8+. 
+**
+********************************************************************************
+.SUBCKT TRI_SOURCE 1 2 params: _V1=0 _V2=1 _FREQ=100k _DRATIOx100=50 _DELAY=0 _OFF_UNTIL_DELAY=0 _IDLE_IN_POP=0 _USEPHASE=0 _PHASE=0
+V1 1 2 PWLS TRI
++ V1={_V1} 
++ V2={_V2} 
++ FREQ={_FREQ} 
++ DRATIO={_DRATIOx100/100}
++ DELAY={IFF(_USEPHASE, _PHASE/360/_FREQ, _DELAY)} 
++ OFF_UNTIL_DELAY={_OFF_UNTIL_DELAY} 
++ END
+.ENDS
+.subckt PARAM_OPAMP VINP VINN VCC VEE VOUT params:
++ VOS=0 IB=100n IBOS=1n A0=100k GBW=1e6 SR_POS=1e6 SR_NEG=1e6
++ CMRR=100k PSRR=100k RIN=1meg
++ ROUT=100 IQ=0.001 VDIFF_POS=2 VDIFF_NEG=2 VOFF_TOL=0 
+*#LABELS ,Offset Voltage,Bias Current,Offset Current,Open-loop Gain,Gain-bandwidth,Pos. Slew Rate,Neg. Slew Rate,CMRR,PSRR,Input Resistance,Output Res.,Quiescent Curr.,Headroom Pos.,Headroom Neg.,Offseet V. (Statistical)::-0.1|0.1|10u
+.PARAM voffStat = {VOFF_TOL*(GAUSS(1)-1)}
+B1ARB1 G4_N G3_P I=ilim*tanh((V(VINN,VINP)-VOS-voffStat)*Gin/ilim) 
+V1ARB2 G3_P G4_N 0
+** Soft limit using LNCOSH
+.PARAM sharp=10
+** The first term ensures that there is always at least a tiny amount 
+** of gain. No gain at all often leads to problems
+** Modified 29.4.03 - correct error with vee and vcc ref.
+B1ARB2 C1_P G4_N V=-R*I(V1ARB2)/A0*1e-5 +  ((lncosh(sharp*((-R*I(V1ARB2))-(V(VEE,G4_N)+VDIFF_NEG)))+sharp*(V(VEE,G4_N)+VDIFF_NEG) - (lncosh(sharp*((-R*I(V1ARB2))-(V(VCC,G4_N)-VDIFF_POS)))-sharp*(V(VCC,G4_N)-VDIFF_POS)))/sharp/2)
+**B1ARB2 C1_P G4_N V=-R*I(V1ARB2)/A0*1e-5 +  ((lncosh(sharp*((-R*I(V1ARB2))-(V(VEE)+VDIFF_NEG)))+sharp*(V(VEE)+VDIFF_NEG) - (lncosh(sharp*((-R*I(V1ARB2))-(V(VCC)-VDIFF_POS)))-sharp*(V(VCC)-VDIFF_POS)))/sharp/2)
+**B1ARB2 C1_P G4_N V=Limit(-R*I(V1ARB2),V(VEE)+VDIFF_NEG, V(VCC)-VDIFF_POS) 
+**.ends
+V2 V2_P V2_N {Vbias}
+V3 V2_N V3_N {Vbias}
+** 29.04.03 Split offset and bias into separate generators
+I2 VINP G4_N {IB}
+IBOS2 VINP G4_N {IBOS/2}
+I1 VINN G4_N {IB}
+IBOS1 VINN G4_N {-IBOS/2}
+C2 V2_N G4_N {1/2/PI/RO/5/gbw}
+C1 C1_P G3_P {C}
+E2 G4_N VEE VCC VEE 500m
+G4 G3_P G4_N VCC G4_N {gin*psgain}
+G2 G3_P G4_N VEE G4_N {gin*psgain}
+G3 G3_P G4_N VINN G4_N {gin*cmgain/2}
+G1 G3_P G4_N VINP G4_N {gin*cmgain/2}
+Q2 VEE V3_N VOUT VCC P1
+Q1 VCC V2_P VOUT VEE N1
+R3 V2_N C1_P {RO}
+** 19.8.04 - somehow got left off
+RIN VINP VINN {RIN}
+.PARAM ILIM = {sqrt(SR_POS)*1e-8}
+.PARAM C = {1e-8/sqrt(SR_POS)}
+.PARAM Gin = {2*PI*GBW*C}
+.PARAM R = {A0/Gin}
+.PARAM IS=1e-15
+.PARAM BETA=100
+.model N1 npn IS={IS} bf={BETA}
+.model P1 pnp IS={IS} bf={BETA}
+.PARAM Vt={BOLTZ*300.15/ECHARGE}
+.PARAM cmgain={1.0/CMRR}
+.PARAM psgain={1.0/PSRR}
+.PARAM VBIAS = {LN(IQ/IS+1)*Vt}
+.PARAM RO={(BETA+1)*ROUT-VT/IQ/2*BETA}
+.ends
+** Peak- peak voltage source
+.model HC04D d_inverter
++ rise_delay = 5.5n
++ fall_delay = 5.5n
++ out_res = 40
++ input_load = 4.5p
++ family = "HC"
+a$BRIDGE_137 DEINT#_out DEINT UNIV_dac
+a$BRIDGE_138 DEINT DEINT#_in HC_adc
+a$BRIDGE_139 cmp-out cmp-out#_in UNIV_adc
+a$BRIDGE_140 RST#_out RST UNIV_dac
+a$BRIDGE_141 S2_CP#_out S2_CP HC_dac
+
+.model UNIV_adc adc_bridge 
++ in_low=2.1 
++ in_high=2.2 
++ rise_delay=1e-12 
++ fall_delay=1e-12
++ out_family = "UNIV"
++ out_low = 0
++ out_high = 5
++ clamp_bias=0.5
++ clamp_res=10
+********************************************************
+**                                                     *
+**               4000 series CMOS 15Volt               *
+**                                                     *
+********************************************************
+.model UNIV_dac dac_bridge 
++ out_high=5        ; Logic high voltage
++ input_load=-31p   ; Compensates for added rise and fall time
++ t_rise=2n         ; Output rise time
++ t_fall=2n         ; Output fall time
++ g_pullup=0.024    ; 1/(logic high output resistance)
++ g_pulldown=0.034  ; 1/(logic low output resistance)
++ g_hiz=1e-9        ; 1/(high impedance output res)
++ knee_low = 2.0    ; voltage at resistive/constant current knee logic low
++ knee_high =2.75   ; voltage at resistive/constant current knee logic high
++ v_smooth = 0.5    ; Knee smoothing band
++ in_family="UNIV"
+** Analog-Digital
+.model HC_adc adc_bridge 
++ in_low=2.1 
++ in_high=2.2 
++ rise_delay=1e-12 
++ fall_delay=1e-12
++ out_family = "HC"
++ out_low = 0
++ out_high = 5
++ clamp_bias=0.5
++ clamp_res=10
+** Added 13.5.03 to make buffer devices accept analoginput connections
+.model HC_dac dac_bridge 
++ out_high=5        ; Logic high voltage
++ input_load=-31p   ; Compensates for added rise and fall time
++ t_rise=2n         ; Output rise time
++ t_fall=2n         ; Output fall time
++ g_pullup=0.024    ; 1/(logic high output resistance)
++ g_pulldown=0.034  ; 1/(logic low output resistance)
++ g_hiz=1e-9        ; 1/(high impedance output res)
++ knee_low = 2.0    ; voltage at resistive/constant current knee logic low
++ knee_high =2.75   ; voltage at resistive/constant current knee logic high
++ v_smooth = 0.5    ; Knee smoothing band
++ in_family="HC"
+** Analog-Digital
+
+********************************************************************************
+***                                                                          ***
+*** Starting Transient analysis at 02:10                                     ***
+***                                                                          ***
+*** Analysis card: .TRAN 100m                                                ***
+***                                                                          ***
+********************************************************************************
+********************************************************************************
+***                                                                          ***
+***                            Simulation Options                            ***
+***                                                                          ***
+********************************************************************************
+RELTOL                    0.001
+ABSTOL                    1e-009
+VNTOL                     1e-006
+POINTTOL                  0.001
+TEMPERATURE               27C
+GMIN                      1e-012
+Matrix Solver             UF KLU Version 1.1
+
+
+
+********************************************************************************
+***                                                                          ***
+***                             Device parameters                            ***
+***                                                                          ***
+********************************************************************************
+Model parameters for devices of type BJT
+========================================
+Model:       X1.N1        X1.P1        X2.N1        X2.P1        X3.N1        
+
+_is          1f           1f           1f           1f           1f           
+bf           100          100          100          100          100          
+
+Model:       X3.P1        
+
+_is          1f           
+bf           100          
+
+
+Instance parameters for devices of type Isource
+===============================================
+Instance:    X1.IBOS1     X1.IBOS2     X2.IBOS1     X2.IBOS2     X3.IBOS1     
+Using model: $Isource     $Isource     $Isource     $Isource     $Isource     
+
+dc           -500p        500p         -500p        500p         -500p        
+
+Instance:    X3.IBOS2     
+Using model: $Isource     
+
+dc           500p         
+
+
+Instance parameters for devices of type VCCS
+============================================
+Instance:    X1.G1        X1.G2        X1.G3        X1.G4        X2.G1        
+Using model: $VCCS        $VCCS        $VCCS        $VCCS        $VCCS        
+
+gain         314.1592654p 628.3185307p 314.1592654p 628.3185307p 314.1592654p 
+
+Instance:    X2.G2        X2.G3        X2.G4        X3.G1        X3.G2        
+Using model: $VCCS        $VCCS        $VCCS        $VCCS        $VCCS        
+
+gain         628.3185307p 314.1592654p 628.3185307p 314.1592654p 628.3185307p 
+
+Instance:    X3.G3        X3.G4        
+Using model: $VCCS        $VCCS        
+
+gain         314.1592654p 628.3185307p 
+
+
+Instance parameters for devices of type Vsource
+===============================================
+Instance:    V5.V1        
+Using model: $Vsource     
+
+
+
+Instance parameters for devices of type CAP1
+============================================
+Instance:    C2           
+Using model: $CAP1        
+
+branch       1            
+
+
+Instance parameters for devices of type CAP2
+============================================
+Instance:    X1.C2        X2.C2        X3.C2        
+Using model: $CAP2        $CAP2        $CAP2        
+
+capacitance  3.614368704p 3.614368704p 3.614368704p 
+
+
+Model parameters for devices of type Switch
+===========================================
+Model:       S1.SW        S2.SW        S3.SW        
+
+roff         1Meg         1Meg         1Meg         
+ron          1            1            1            
+voff         2            2            2            
+von          3            3            3            
+
+
+Model parameters for devices of type d_pulse
+============================================
+Model:       CLK$TP_DPULS 
+             E            
+
+max_source   20m          
+min_sink     -20m         
+period       1u           
+
+
+Model parameters for devices of type d_inverter
+===============================================
+Model:       HC04D        
+
+fall_delay   5.5n         
+input_load   4.5p         
+out_res      40           
+rise_delay   5.5n         
+
+
+Model parameters for devices of type adc_bridge
+===============================================
+Model:       HC_adc       UNIV_adc     
+
+clamp_bias   500m         500m         
+clamp_res    10           10           
+fall_delay   1p           1p           
+in_high      2.2          2.2          
+in_low       2.1          2.1          
+out_high     5            5            
+out_low      0            0            
+rise_delay   1p           1p           
+
+
+Model parameters for devices of type da_converter
+=================================================
+Model:       $$DACU7      
+
+output_offse 2            
+output_range 4            
+output_slew_ 100n         
+
+
+Model parameters for devices of type dac_bridge
+===============================================
+Model:       HC_dac       UNIV_dac     
+
+g_hiz        1n           1n           
+g_pulldown   34m          34m          
+g_pullup     24m          24m          
+input_load   -31p         -31p         
+knee_high    2.75         2.75         
+knee_low     2            2            
+out_high     5            5            
+t_fall       2n           2n           
+t_rise       2n           2n           
+v_smooth     500m         500m         
+
+
+Analysis statistics
+===================
+
+Nominal temperature = 27
+Operating temperature = 27
+Total iterations = 11130
+Transient iterations = 11125
+Transient timepoints = 3130
+Accepted timepoints = 2792
+Total analysis time = 0.375
+Transient time = 0
+Matrix reordering time = 0
+L-U decomposition time = 0
+Matrix solve time = 0
+Load time = 0
+Transient L-U decomp time = 0
+Transient solve time = 0
+Circuit build time = 0.016
+Simulator initialise time = 0.015
+Data write time = 0
+Convergence test time = 0
+LTE time = 0
+JI2 Iterations = 5
+Diag. GMIN stepping iterations = 0
+Junc. GMIN stepping iterations = 0
+Source stepping iterations = 0
+PTA iterations = 0
+Number of matrix fill ins = -101
+Number of initial matrix elements = 233
+Circuit equations = 59
+State vector size = 372
+Number of write buffer faults = 0
+EVT outputs = 22
+EVT ports = 44
+EVT instances = 10
+EVT nodes = 22
+
+Run statistics
+==============
+
+Netlist read in time = 0.031
+Total run time = 0.984 seconds
+Analysis concluded 24.08.17 02:10
