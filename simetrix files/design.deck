@@ -1,0 +1,69 @@
+* \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\1.1 - zuyev - ideal integrator.sxsch
+X1 Vbias S1_N Vdd Vss S1_P PARAM_OPAMP params: VOS 0 IB 0 IBOS 0 A0 1G GBW 1Meg SR_POS
++ 1G SR_NEG 1G CMRR 1G PSRR 1G RIN 1G ROUT 0 IQ 1m VDIFF_POS 0 VDIFF_NEG 0 VOFF_TOL
++ 0 pinnames: inp inn vsp vsn out
+V1 Vdd 0 5
+V2 Vbias 0 0
+R1 S1_N Vin 10k
+V3 Vin 0 -1
+V4 Vss 0 -5
+A$U1 U1_pin_1 U1$TP_DPULSE : Period=1.01m width=10u delay=1m 
+.model U1$TP_DPULSE d_pulse period=1u min_sink=-0.02 max_source=0.02
+X$S1 S1_P S1_N U1_pin_1 0 gen_switch : RON 1 ROFF 1Meg VON 3 VOFF 2 pinnames: P N
++ CP CN
+C2 S1_P S1_N 100n IC=0  BRANCH={IF(ANALYSIS=2,1,0)}
+.GRAPH S1_P axisType="auto" persistence=-1 curveLabel="int-out" analysis="tran|ac|dc"
++ xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.TRAN 2m
+.OPTIONS minTimeStep=1f   conv=2   abstol=1n   cshuntsub
+9.SIMULATOR SIMETRIX
+.SUBCKT PARAM_OPAMP  1 36 20 12 15
+.NODE_MAP inp 1
+.NODE_MAP inn 36
+.NODE_MAP vsp 20
+.NODE_MAP vsn 12
+.NODE_MAP out 15
+VOSBAL  7  29  DC   0
+EU1     7  1 20 12  1e-005
+IB5     1 12 DC     1.005e-007
+IB6     36 12 DC    9.95e-008
+RDM    36 29        1000000
+RCM    12 13 5.000000e+11
+G5     12 13 36 31 1e-12
+G6     12 13  1 31 1e-12
+RP1    31 20        15000
+RP2    31 12        15000
+GCM    16 12 13 12  1e-005
+R1     12 16        628.318530717959
+GDM    12 16 29 36 1
+R2     31   6           1.99999996
+G3      6  31  16 12    1.59154946274994e-006
+G4     11  31   6 31    1000000
+ROUT   31  11           50
+RO1    11 15            50
+.MODEL M3M VPWLR NSEG= 2     X0= 0.0         Y0= 0.0     X1= 1.0         Y1= 0.01U
++ X2= 2.0         Y2= 10
+R03    15 20 200.0MEG
+R02    15 12 200.0MEG
+FF1     12  28  RO1  1.0
+!R_FF2  28  12  M3M  IC=2
+!R_FF3  12  28  M3M  IC=2
+FF2     20  31  !R_FF2  1.0
+FF3     31  12  !R_FF3  1.0
+!R_SLEW_RATE  16  12  M1M  IC=2
+.MODEL M1M VPWLR NSEG= 3     X0= -101 Y0= -1MEG     X1= -100 Y1=  0.     X2= 100 Y2=
++ 0.0     X3= 101 Y3=  1MEG
+H_IOUT_LIMIT 301 12 RO1 1K
+!R_IOUT_LIMIT 301 12 M2M IC=2
+.MODEL M2M VPWLR NSEG= 3     X0= -6 Y0= -1.0     X1= -5 Y1=  0.0     X2= 5 Y2=  0.0
++ X3= 6 Y3=  1.0
+F_IOUT_LIMIT  11 31 !R_IOUT_LIMIT 10K
+VP1    20  30  DC 3
+!R_VP_LIMIT 15 30 M3M IC=1
+VM1    32  12  DC 3
+!R_VM_LIMIT 32 15 M3M IC=1
+C2  11   6 1.59154943091895e-010 
+.ENDS PARAM_OPAMP
+
+.END
+

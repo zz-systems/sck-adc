@@ -1,0 +1,159 @@
+********************************************************************************************************
+***                                                                                                  ***
+*** Elements Version 8.00p (x86) - 26.08.17 16:48                                                    ***
+*** Platform: Windows 10                                                                             ***
+*** Architecture: x64                                                                                ***
+*** Serial Number:                                                                                   ***
+*** User:                                                                                            ***
+***                                                                                                  ***
+*** TITLE:   *                                                                                       ***
+*** NETLIST: \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\8.00\RC4558\design.net***
+***                                                                                                  ***
+********************************************************************************************************
+
+********************************************************************************
+***                                                                          ***
+***                                Input Deck                                ***
+***                                                                          ***
+********************************************************************************
+
+#SIMETRIX
+V1 Vdd 0 15
+X2 Vbias R2_P Vdd Vss X2_out RC4558 pinnames: inp inn vsp vsn out
+V2 Vss 0 -15
+R1 X2_out R2_P 10k
+V3 Vbias 0 0
+R2 R2_P Vin 1K
+V4 Vin 0 AC 10 0
+.KEEP X2_out
+.GRAPH "db(:X2_out)" axisType="auto" persistence=0 curveLabel="dB" analysis="ac" xLog="auto" yLog="lin" yUnit="dB"  nowarn=true disabled=false
+.AC DEC 25 1k 100Meg
+.SUBCKT RC4558   1 2 3 4 5
+*
+C1   11 12 2.664E-12
+C2    6  7 20.00E-12
+DC    5 53 DX
+DE   54  5 DX
+DLP  90 91 DX
+DLN  92 90 DX
+DP    4  3 DX
+EGND 99  0 POLY(2) (3,0) (4,0) 0 .5 .5
+FB    7 99 POLY(5) VB VC VE VLP VLN 0 6.365E6 -6E6 6E6 6E6 -6E6
+GA 6  0 11 12 418.0E-6
+GCM   0  6 10 99 6.705E-9
+IEE   3 10 DC 34.28E-6
+HLIM 90  0 VLIM 1K
+Q1   11  2 13 QX
+Q2   12  1 14 QX
+R2    6  9 100.0E3
+RC1   4 11 2.652E3
+RC2   4 12 2.652E3
+RE1  13 10 1.122E3
+RE2  14 10 1.122E3
+REE  10 99 5.834E6
+RO1 8  5 125
+RO2 7 99 125
+RP    3  4 24.67E3
+VB    9  0 DC 0
+VC    3 53 DC 2.600
+VE   54  4 DC 2.600
+VLIM  7  8 DC 0
+VLP  91  0 DC 25
+VLN   0 92 DC 25
+.MODEL DX D(IS=800.0E-18)
+.MODEL QX PNP(IS=800.0E-18 BF=121.4)
+.ENDS
+*
+* File: RC4559.301
+*
+* RC4559 OPERATIONAL AMPLIFIER "MACROMODEL" SUBCIRCUIT
+* CREATED USING PARTS RELEASE 4.01 ON 09/14/89 AT 08:35
+* (REV N/A)      SUPPLY VOLTAGE: +/-15V
+* CONNECTIONS:   NON-INVERTING INPUT
+*                | INVERTING INPUT
+*                | | POSITIVE POWER SUPPLY
+*                | | | NEGATIVE POWER SUPPLY
+*                | | | | OUTPUT
+*                | | | | |
+
+********************************************************************************
+***                                                                          ***
+*** Starting AC analysis at 16:48                                            ***
+***                                                                          ***
+*** Analysis card: .AC DEC 25 1k 100Meg                                      ***
+***                                                                          ***
+********************************************************************************
+********************************************************************************
+***                                                                          ***
+***                            Simulation Options                            ***
+***                                                                          ***
+********************************************************************************
+RELTOL                    0.001
+ABSTOL                    1e-012
+VNTOL                     1e-006
+POINTTOL                  0.001
+TEMPERATURE               27C
+GMIN                      1e-012
+Matrix Solver             UF KLU Version 1.1
+
+
+
+********************************************************************************
+***                                                                          ***
+***                             Device parameters                            ***
+***                                                                          ***
+********************************************************************************
+Model parameters for devices of type BJT
+========================================
+Model:       X2.QX        
+
+_is          800a         
+bf           121.4        
+
+
+Model parameters for devices of type Diode
+==========================================
+Model:       X2.DX        
+
+is           800a         
+
+
+Analysis statistics
+===================
+
+Nominal temperature = 27
+Operating temperature = 27
+Total iterations = 13
+Transient iterations = 0
+Transient timepoints = 0
+Accepted timepoints = 0
+Total analysis time = 0.188
+Transient time = 0
+Matrix reordering time = 0
+L-U decomposition time = 0
+Matrix solve time = 0
+Load time = 0
+Transient L-U decomp time = 0
+Transient solve time = 0
+Circuit build time = 0.063
+Simulator initialise time = 0
+Data write time = 0
+Convergence test time = 0
+LTE time = 0
+JI2 Iterations = 13
+Diag. GMIN stepping iterations = 0
+Junc. GMIN stepping iterations = 0
+Source stepping iterations = 0
+PTA iterations = 0
+Number of matrix fill ins = -21
+Number of initial matrix elements = 114
+Circuit equations = 34
+State vector size = 128
+Number of write buffer faults = 0
+
+Run statistics
+==============
+
+Netlist read in time = 0
+Total run time = 0.485 seconds
+Analysis concluded 26.08.17 16:48

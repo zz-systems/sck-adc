@@ -1,0 +1,356 @@
+************************************************************************************************************************************
+***                                                                                                                              ***
+*** Elements Version 8.00p (x86) - 25.08.17 18:28                                                                                ***
+*** Platform: Windows 10                                                                                                         ***
+*** Architecture: x64                                                                                                            ***
+*** Serial Number:                                                                                                               ***
+*** User:                                                                                                                        ***
+***                                                                                                                              ***
+*** TITLE:   * \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\5.60\1.4 - zuyev - dual slope adc - LT1800.sxsch***
+*** NETLIST: \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\5.60\design.net                                   ***
+***                                                                                                                              ***
+************************************************************************************************************************************
+
+********************************************************************************
+***                                                                          ***
+***                                Input Deck                                ***
+***                                                                          ***
+********************************************************************************
+
+#SIMETRIX
+X1 Vss S1_N Vdd Vss S1_P LT1800 pinnames: inp inn vsp vsn out
+V1 Vdd 0 5
+X2 Vss S1_P Vdd Vss cmp-out LT1800 pinnames: inp inn vsp vsn out
+V2 Vss 0 -5
+X3 Vss R3_P Vdd Vss X3_out LT1800 pinnames: inp inn vsp vsn out
+R1 S1_N X3_out 10k
+V3 Vbias 0 0
+R2 X3_out R3_P 1K
+V4 Vref 0 -1
+R3 R3_P S2_P 1K
+X$V5 Vin 0 TRI_SOURCE pinnames: P N params: _V1=0 _V2=4 _FREQ=10 _DELAY=0 _DRATIOx100=50 _T_RISE=50m _T_FALL=50m _DAMP_COEF=0 _PWIDTH=0 _OFF_UNTIL_DELAY=0 _IDLE_IN_POP=0 _USEPHASE=0 _PHASE=0
+R4 R4_P Vin 3k
+X$ARB1 Vin dac-out ARB1_OUT $$arbsourceARB1 pinnames: vin dac-out OUT 
+.subckt $$arbsourceARB1 vin dac-out OUT 
+B$OUT OUT 0 V=V(Vin)-V(dac-out) 
+.ends
+A$U10 DEINT S2_CP HC04D
+A$U1 [CLK_pin_1] [BUS1#0 BUS1#1 BUS1#2 BUS1#3 BUS1#4 BUS1#5 BUS1#6 BUS1#7 DEINT RST] $$CounterU1 
+.model $$CounterU1 d_logic_block file=$$counterU1 user=[10n]
+.file $$counterU1 
+X$S1 S1_P S1_N RST 0 gen_switch : RON=1  ROFF=1Meg VON=3  VOFF=2  pinnames: P N CP CN
+A$U2 [BUS1#0 BUS1#1 BUS1#2 BUS1#3 BUS1#4 BUS1#5 BUS1#6 BUS1#7 cmp-out] [BUS2#0 BUS2#1 BUS2#2 BUS2#3 BUS2#4 BUS2#5 BUS2#6 BUS2#7] $$RegisterU2 
+.model $$RegisterU2 d_logic_block file=$$registerU2 user=[5n,20n] 
+.file $$registerU2 
+X$S2 S2_P R4_P S2_CP 0 gen_switch : RON=1  ROFF=1Meg VON=3  VOFF=2  pinnames: P N CP CN
+X$S3 S2_P Vref DEINT 0 gen_switch : RON=1  ROFF=1Meg VON=3  VOFF=2  pinnames: P N CP CN
+A$U7 [BUS2#0 BUS2#1 BUS2#2 BUS2#3 BUS2#4 BUS2#5 BUS2#6 BUS2#7] dac-out $$DACU7 
+.model $$DACU7 DA_Converter 
++ output_slew_time=1e-007 
++ output_range=4 output_offset=2 
+C2 S1_P S1_N 100n IC=0  BRANCH={IF(ANALYSIS=2,1,0)}
+A$CLK CLK_pin_1 CLK$TP_DPULSE : Period=16u width=8u delay=0 
+.model CLK$TP_DPULSE d_pulse period=1u min_sink=-0.02 max_source=0.02
+.GRAPH dac-out axisType="auto" persistence=-1 curveLabel="dac-out" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH cmp-out axisType="digital" persistence=-1 curveLabel="cmp-out" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH Vin curveLabel= Vin nowarn=true ylog=auto xlog=auto analysis=tran|ac|dc disabled=false 
+.GRAPH S1_P axisType="auto" persistence=-1 curveLabel="int-out" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH ARB1_OUT axisType="grid" persistence=-1 curveLabel="DIFF" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH RST axisType="digital" persistence=-1 curveLabel="RST" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH DEINT axisType="digital" persistence=-1 curveLabel="DEINT" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH "ComposeDigital('BUS2', [-1, -1],  ''  , '%BUSNAME%#%WIRENUM%'  , [0.8, 0.9] )*1.0+0" complete=true  axistype=digital   bus=dec curveLabel="adc-out" disabled=false 
+.KEEP ^BUS2#*
+.TRAN 100m
+.OPTIONS minTimeStep=1f
++  conv=2
++  abstol=1n
+.subckt gen_switch 1 2 3 4
+S1 1 2 3 4 SW 
+.model SW VSWITCH RON={ron} ROFF={roff} VON={von} VOFF={voff} 
+.ends 
+********************************************************************************
+**
+** Timed switch - this is a comprehensive model with all features.
+** Uses new built-in timed switch model. Needs v8+. 
+**
+********************************************************************************
+.SUBCKT TRI_SOURCE 1 2 params: _V1=0 _V2=1 _FREQ=100k _DRATIOx100=50 _DELAY=0 _OFF_UNTIL_DELAY=0 _IDLE_IN_POP=0 _USEPHASE=0 _PHASE=0
+V1 1 2 PWLS TRI
++ V1={_V1} 
++ V2={_V2} 
++ FREQ={_FREQ} 
++ DRATIO={_DRATIOx100/100}
++ DELAY={IFF(_USEPHASE, _PHASE/360/_FREQ, _DELAY)} 
++ OFF_UNTIL_DELAY={_OFF_UNTIL_DELAY} 
++ END
+.ENDS
+.SUBCKT LT1800 3 2 7 4 6
+XLT1800 3 2 7 4 6 LT1800MD
+.ENDS LT1800
+*
+.SUBCKT LT1800MD 1 2 3 4 5
+*
+* back-to-back diodes
+DIP1 1 114 DX
+DIP2 114 2 DX
+DIP3 2 115 DX
+DIP4 115 1 DX
+*
+* ESD diodes
+DIP5 1 3 DX
+DIP6 4 1 DX
+DIP7 2 3 DX
+DIP8 4 2 DX
+*
+* reverse input protection
+DIP9  11 1 DX
+DIP10 12 2 DX
+*
+* bias  current for Vin > Vdd -1.3V (NPN stage active)
+GNPN1 3 500  POLY(2) 1 3  2 3  1.10E-3  5.0e-4  5.0e-4
+RNPN1 500  3  1.0e+005
+DNPN1 3  500 DX
+DNPN2 500 501 DX
+DNPN3  501  502 DX
+VNPN2  502 3 DC 0.27
+RNPN2 501 3 1.0E6
+GNPN2  3  1  501 3  -5.50E-7
+GNPN3  3  2  501 3  -5.25E-7
+*
+* input stage
+CIN 1 2 2.0000e-013
+CIC1 1 99 1.8000e-012
+CIC2 2 99 1.8000e-012
+GRIN 1 2 1 2 9.3010e-008
+VCMEP 303 3 DC 0.8
+VCMEN 4 304 DC 1.6
+Q1 11 2 13 Q1
+Q2 12 111 14 Q2
+RC1 304 11 2.1869e+003
+RC2 304 12 2.1869e+003
+RE1 10 13 8.2191e+000
+RE2 10 14 8.2191e+000
+C1 11 12 3.0324e-013
+IEE 303 10 DC 9.1456e-004
+D1 10 303 DX
+GA 60 99 11 12 4.5727e-004
+*
+* noise sources
+FRI1 99 1 VRI1 1
+VRI1 101 0 DC 0
+RRI1 101 0 1.6483e+004
+FRI2 99 2 VRI2 1
+VRI2 201 0 DC 0
+RRI2 201 0 1.6483e+004
+GR 99 60 605 606 6.3286e+000
+IR1 0 605 DC 1
+IR2 0 606 DC 1
+DR1 605 0 DR
+DR2 606 0 DR
+*
+* common mode rejection
+GCM1 99 20 POLY(2) 1 99 2 99 0 5.0000e-004 5.0000e-004
+RCM1 21 99 1.000000e+003
+RCM2 20 99 1.0000e+006
+LCM 20 21 1.0610e-003
+ECM 111 1 20 99 1.0000e-005
+*
+* frequency shaper
+RP1 601 99 3.6364e+003
+CP1 60 601 1.4589e-012
+RP11 60 99 1.0000e+004
+GP1 99 61 60 99 1.0000e-004
+RP2 61 99 1.0000e+004
+CP2 61 99 3.1831e-013
+GP2 99 62 61 99 1.0000e-004
+RP3 621 99 1.3333e+004
+LP3 62 621 7.0736e-005
+RP33 62 99 4.0000e+004
+GP3 99 6 62 99 1.0000e-004
+*
+* output stage
+R2 6 99 1.0000e+003
+C2 6 7 3.2000e-011
+GB 7 99 6 99 4.4227e+002
+R01 7 99 1.1900e+001
+R02 7 50 1.0000e-001
+R03 50 5 1.2000e+001
+R04 5 99 5.9379e+009
+VC 53 50 DC 1.2090e-001
+VE 54 50 DC -1.1290e-001
+DC1 53 55 DVC
+DC2 55 56 DVC
+DE1 57 54 DVC
+DE2 58 57 DVC
+GVC1 3 56 3 56 1.0E-4
+GVE1 4 58 4 58 1.0E-4
+GVC2 3 55 3 55 1.0E-5
+GVE2 4 57 4 57 1.0E-5
+GVLP 99 6 56 3 1.0000e+000
+GVLN 99 6 58 4 1.0000e+000
+ECLP 91 0 7 50 2.2222e+002
+ECLN 92 0 7 50 2.2222e+002
+DCLP 91 90 DX
+DCLN 90 92 DX
+VLIM 90 0 DC 0
+FB 7 99 VLIM 7.7509e+000
+*
+* output protection diodes
+DOPP 5 3 DX
+DOPN 4 5 DX
+*
+* supply characteristic
+EGND 99 0 POLY(2) 3 0 4 0 0 0.5 0.5
+DSUB 4 3 DX
+IP 3 4 DC 6.8544e-004
+*
+GPC 31 0 7 50 1.0000e+001
+DPC1 3 31 DVC
+DPC2 32 4 DVC
+RPC1 31 32 1.0E6
+RPC2 31 33 9.7531
+EPC 33 32 3 4 1.0
+*
+.MODEL DX D (IS=8.2592e-016 RS=0 XTI=1 CJO=0 IBV=1.0E-10 TT=0)
+.MODEL DVC D (IS=8.2592e-016 RS=0 XTI=-2.1 N=0.1 EG=0.1 CJO=0 IBV=1.0E-10 TT=0)
+.MODEL Q1 PNP (IS=1.0016e-015 BF=60969.9 XTB=-7.3897e+000
++ XTI=3.00712e+000 KF=2.0803e-014)
+.MODEL Q2 PNP (IS=9.9842e-016 BF=182909.8 XTB=-7.3897e+000
++ XTI=2.99288e+000 KF=2.0803e-014)
+.MODEL DR D (IS=8.2592e-016 KF=6.4391e-017 RS=0 XTI=1 CJO=0 IBV=1.0E-10 TT=0)
+.ENDS LT1800MD
+*
+***
+*
+* ----------------------------
+*  terminal definitions 
+* ----------------------------
+*& INP 3
+*& INN 2
+*& VDD 7
+*& VSS 4
+*& OUTP 6
+*& SHDN 1
+*& GND 0
+*& CKT LT1806
+* ----------------------------
+*
+.model HC04D d_inverter
++ rise_delay = 5.5n
++ fall_delay = 5.5n
++ out_res = 40
++ input_load = 4.5p
++ family = "HC"
+a$BRIDGE_212 DEINT#_out DEINT UNIV_dac
+a$BRIDGE_213 DEINT DEINT#_in HC_adc
+a$BRIDGE_214 cmp-out cmp-out#_in UNIV_adc
+a$BRIDGE_215 RST#_out RST UNIV_dac
+a$BRIDGE_216 S2_CP#_out S2_CP HC_dac
+
+.model UNIV_adc adc_bridge 
++ in_low=2.1 
++ in_high=2.2 
++ rise_delay=1e-12 
++ fall_delay=1e-12
++ out_family = "UNIV"
++ out_low = 0
++ out_high = 5
++ clamp_bias=0.5
++ clamp_res=10
+********************************************************
+**                                                     *
+**               4000 series CMOS 15Volt               *
+**                                                     *
+********************************************************
+.model UNIV_dac dac_bridge 
++ out_high=5        ; Logic high voltage
++ input_load=-31p   ; Compensates for added rise and fall time
++ t_rise=2n         ; Output rise time
++ t_fall=2n         ; Output fall time
++ g_pullup=0.024    ; 1/(logic high output resistance)
++ g_pulldown=0.034  ; 1/(logic low output resistance)
++ g_hiz=1e-9        ; 1/(high impedance output res)
++ knee_low = 2.0    ; voltage at resistive/constant current knee logic low
++ knee_high =2.75   ; voltage at resistive/constant current knee logic high
++ v_smooth = 0.5    ; Knee smoothing band
++ in_family="UNIV"
+** Analog-Digital
+.model HC_adc adc_bridge 
++ in_low=2.1 
++ in_high=2.2 
++ rise_delay=1e-12 
++ fall_delay=1e-12
++ out_family = "HC"
++ out_low = 0
++ out_high = 5
++ clamp_bias=0.5
++ clamp_res=10
+** Added 13.5.03 to make buffer devices accept analoginput connections
+.model HC_dac dac_bridge 
++ out_high=5        ; Logic high voltage
++ input_load=-31p   ; Compensates for added rise and fall time
++ t_rise=2n         ; Output rise time
++ t_fall=2n         ; Output fall time
++ g_pullup=0.024    ; 1/(logic high output resistance)
++ g_pulldown=0.034  ; 1/(logic low output resistance)
++ g_hiz=1e-9        ; 1/(high impedance output res)
++ knee_low = 2.0    ; voltage at resistive/constant current knee logic low
++ knee_high =2.75   ; voltage at resistive/constant current knee logic high
++ v_smooth = 0.5    ; Knee smoothing band
++ in_family="HC"
+** Analog-Digital
+
+********************************************************************************
+***                                                                          ***
+*** Starting Transient analysis at 18:28                                     ***
+***                                                                          ***
+*** Analysis card: .TRAN 100m                                                ***
+***                                                                          ***
+********************************************************************************
+
+*** ERROR *** The circuit is too large to simulate with this version.
+Too many analog nodes
+
+Analysis statistics
+===================
+
+Nominal temperature = 27
+Operating temperature = 27
+Total iterations = 0
+Transient iterations = 0
+Transient timepoints = 0
+Accepted timepoints = 0
+Total analysis time = 0.016
+Transient time = 0
+Matrix reordering time = 0
+L-U decomposition time = 0
+Matrix solve time = 0
+Load time = 0
+Transient L-U decomp time = 0
+Transient solve time = 0
+Circuit build time = 0.016
+Simulator initialise time = 0.016
+Data write time = 0
+Convergence test time = 0
+LTE time = 0
+JI2 Iterations = 0
+Diag. GMIN stepping iterations = 0
+Junc. GMIN stepping iterations = 0
+Source stepping iterations = 0
+PTA iterations = 0
+Number of matrix fill ins = 0
+Number of initial matrix elements = 0
+Circuit equations = 191
+State vector size = 982
+Number of write buffer faults = 0
+EVT outputs = 22
+EVT ports = 44
+EVT instances = 10
+EVT nodes = 22
+
+Run statistics
+==============
+
+Netlist read in time = 0.047
+Total run time = 0.157 seconds
+Analysis concluded 25.08.17 18:28
