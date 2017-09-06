@@ -1,0 +1,18 @@
+* \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\5.60\RC4558\zuyev_1.4_RC4558 - voltage swing.sxsch
+*#SIMETRIX
+X1 Vbias R7_P Vdd Vss X1_out RC4558 pinnames: inp inn vsp vsn out
+V1 Vdd 0 15
+V2 Vss 0 -15
+V3 Vin 0 PULSE -1 1 0 100u 100u 0 200u
+V4 Vbias 0 0
+R7 R7_P Vin 1K
+R8 X1_out R7_P 20k
+RL X1_out 0 250
+.GRAPH RL#P axisType="auto" persistence=-1 curveLabel="I(RL)" analysis="tran|ac|dc" xLog="auto" yLog="lin"  nowarn=true disabled=false 
+.GRAPH Vin axisType="grid" axisName="Linear output range" persistence=-1 curveLabel="Vin" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH X1_out axisType="grid" axisName="Linear output range" persistence=-1 curveLabel="VOut" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH Vdd axisType="grid" axisName="Linear output range" persistence=-1 curveLabel="Vdd" analysis="tran|ac|dc" order="##" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH Vss axisType="grid" axisName="Linear output range" persistence=-1 curveLabel="Vss" analysis="tran|ac|dc" order="##" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.TRAN 1m SWEEP DEVICE=RL LIST  100G 10k 2k
+.TEMP 25
+

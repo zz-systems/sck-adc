@@ -241,11 +241,12 @@
 					& Simuliert & Datenblatt \cite{datasheet:RC4558} \\
 				\midrule
 				
-				V\textsubscript{os} 											& $ \approx \SI{10}{\micro\volt}  $ &  0.5--\SI{6}{\milli\volt}  \\			
+				V\textsubscript{os} 											& $ \approx \SI{9.4}{\micro\volt}  $ &  0.5--\SI{6}{\milli\volt}  \\			
 				I\textsubscript{bias} 											 & $ \approx-139.56$ 		& 150--\SI{800}{\nano\ampere}  \\			
 				V\textsubscript{swing} 										  & $ \approx\pm9.8$ 		 & $ \pm \SI{10}{\volt} $ \\
+				 $A_{VOL}$														   & $\approx \SI{70}{\decibel}$ 		   & N/A \\
 				CMRR 																  & $\approx78.4$ 		      & 70--\SI{90}{\decibel}\\
-				PSRR  																   & $\approx 99.8$ 		   & N/A \\
+				PSRR  																   & $\approx \SI{99.8}{\decibel}$ 		   & N/A \\
 				SR 																		 & $ \approx 1.809$ 		 & 1.1--\SI{1.7}{\volt\per\micro\second}\\
 				GBWP 															     & $\approx 3.09$ 			  & \SI{3}{\mega\hertz}\\
 				\bottomrule
@@ -317,36 +318,67 @@
 		\label{tab:opamp-LT1800}
 	\end{table}
 
-	\subsection{ Messverfahren}
-	\label{sec:appendix_measurement_methods}
-	Zur besseren Nachvollziehbarkeit der Ergebnisse folgt in diesem Kapitel eine Beschreibung der notwendigen Simulationsschritte. 
+	\subsection{Messverfahren RC4558}
+	\label{sec:appendix_measurement_methods_RC4558}
+	Zur besseren Nachvollziehbarkeit der Ergebnisse folgt in diesem Kapitel eine Beschreibung der notwendigen Simulationsschritte. 	
 	\minisec{Slew rate}	
+	Datei: \emph{RC4558 - slew rate}
 	\begin{enumerate}
-		\item Cursors $\rightarrow$ Toggle On/Off
-		\item Cursor \enquote{REF} per Edit Properties $\rightarrow$ X1 = 200n auf \SI{200}{\nano\second} setzen
-		\item Cursor \enquote{A} auf \SI{400}{\nano\second} setzen
-		\item Spannungsdifferenz mit 5 multiplizieren
+		\item Die Kurve \enquote{VOut} auswählen
+		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Rise Time 10\%-90\% (auto)
+		\item $SR = \SI{500}{\milli\volt} \cdot 80\% \cdot \frac{\SI{1}{\micro\second}}{t_{rise}}$
 	\end{enumerate}
 
-	\minisec{Bias current}
+	\minisec{Input bias current}
+	Datei: \emph{RC4558 - input bias current}
 	\begin{enumerate}
-		\item Kurve \enquote{I(bias)} auswählen
-		\item Measure $\rightarrow$ Mean $\Rightarrow I_{bias}$
+		\item Die Kurve \enquote{I(bias)} auswählen
+		\item Measure $\rightarrow$ Mean
 	\end{enumerate}
 
-	\minisec{CMRR, PSRR}
-	Hier wurde ein kombiniertes Messverfahren \cite{website:amp_psrr_cmrr_circuits} für mehrere Parameter verwendet.
+	\minisec{Input offset voltage}	
+	Datei: \emph{RC4558 - voffset}
+	
+	Hier wurde ein erweitertes Messverfahren \cite{website:amp_psrr_cmrr_circuits} verwendet.
 	\begin{enumerate}
-		\item Die Kurven $V_{os PSRR+}$, $V_{os PSRR-}$, $V_{os CMRR}$, $V_{ddn}$, $V_{ssn}$, $V_{cmn}$ auswählen.
-		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Peak To Peak $\Rightarrow \hat{V}$, \emph{Amplitude}
-		\item $ PSRR+ = 20 * log_{10} \frac{\hat{V}_{ddn}}{\hat{V}_{os PSRR+}}$
-		\item $ PSRR- = 20 * log_{10} \frac{\hat{V}_{ssn}}{\hat{V}_{os PSRR-}}$
-		\item $ CMRR = 20 * log_{10} \frac{\hat{V}_{cmn}}{\hat{V}_{os CMRR}}$
+		\item Die Kurve \enquote{VOffset} auswählen
+		\item Measure $\rightarrow$ Mean
 	\end{enumerate}
+
+	\minisec{CMRR}	
+	Datei: \emph{RC4558 - cmrr}
+	
+	Hier wurde ein erweitertes Messverfahren \cite{website:amp_psrr_cmrr_circuits} verwendet.
+	\begin{enumerate}
+		\item Die Kurven $V_{cm}$ und $V_{offset}$ auswählen.
+		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Peak To Peak $\Rightarrow 2\hat{V}_{cm}$
+		\item $ CMRR = 20 * log_{10} \frac{2\hat{V}_{cm}}{2\hat{V}_{offset}}$
+	\end{enumerate}
+
+	\minisec{PSRR}	
+	Datei: \emph{RC4558 - psrr}
+	
+	Hier wurde ein erweitertes Messverfahren \cite{website:amp_psrr_cmrr_circuits} verwendet.
+	\begin{enumerate}
+		\item Die Kurven $V_{dd}$ und $V_{offset}$ auswählen.
+		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Peak To Peak $\Rightarrow 2\hat{V}_{dd}$
+		\item $ PSRR = 20 * log_{10} \frac{2\hat{V}_{dd}}{2\hat{V}_{offset}}$
+	\end{enumerate}
+
+	\minisec{Open loop gain}	
+	Datei: \emph{RC4558 - olgain}
+	
+	Hier wurde ein erweitertes Messverfahren \cite{website:amp_psrr_cmrr_circuits} verwendet.
+	\begin{enumerate}
+		\item Die Kurve $Gain$ auswählen.
+		\item Measure $\rightarrow$ Maximum
+	\end{enumerate}
+	
 
 	\minisec{Gain bandwidth product}
+	Datei: \emph{RC4558 - unity gain bandwidth}
 	\begin{enumerate}
-		\item Die Kurve $dB$ auswählen
+		\item Die Kurve $Gain$ auswählen
 		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Lowpass \SI{-3}{\decibel} (db Plot, auto) $\Rightarrow f_{3dB}$
 		\item $ GBP = A \cdot f_{3dB} = 10 \cdot f_{3dB} $
 	\end{enumerate}
@@ -354,10 +386,80 @@
 	\minisec{Voltage swing}
 	\begin{enumerate}
 		\item Die Kurven $V_{out RL=100G}$, $V_{out RL=10k}$, $V_{out RL=2k}$ auswählen. $R_L=\SI{100}{\giga\ohm}$ simuliert den Leerlauf.
-		\item Measure $\rightarrow$ Minimum $\Rightarrow V_{min}$
-		\item Measure $\rightarrow$ Maximum $\Rightarrow V_{max}$
-		\item $V_{swing, lo} = \mid V_{ss} - V_{min} \mid$
-		\item $V_{swing, hi} = \mid V_{dd} - V_{max} \mid$
+		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Peak To Peak $\Rightarrow 2\hat{V}$
+		\item $V_{swing} = \pm \frac{2\hat{V}}{2}$
+	\end{enumerate}
+
+	\subsection{Messverfahren LT1800}
+	\label{sec:appendix_measurement_methods_LT1800}
+	Zur besseren Nachvollziehbarkeit der Ergebnisse folgt in diesem Kapitel eine Beschreibung der notwendigen Simulationsschritte. 	
+	\minisec{Slew rate}	
+	Datei: \emph{RC4558 - slew rate}
+	\begin{enumerate}
+		\item Die Kurve \enquote{VOut} auswählen
+		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Rise Time 10\%-90\% (auto)
+		\item $SR = \SI{500}{\milli\volt} \cdot 80\% \cdot \frac{\SI{1}{\micro\second}}{t_{rise}}$
+	\end{enumerate}
+	
+	\minisec{Input bias current}
+	Datei: \emph{RC4558 - input bias current}
+	\begin{enumerate}
+		\item Die Kurve \enquote{I(bias)} auswählen
+		\item Measure $\rightarrow$ Mean
+	\end{enumerate}
+	
+	\minisec{Input offset voltage}	
+	Datei: \emph{RC4558 - voffset}
+	
+	Hier wurde ein erweitertes Messverfahren \cite{website:amp_psrr_cmrr_circuits} verwendet.
+	\begin{enumerate}
+		\item Die Kurve \enquote{VOffset} auswählen
+		\item Measure $\rightarrow$ Mean
+	\end{enumerate}
+	
+	\minisec{CMRR}	
+	Datei: \emph{RC4558 - cmrr}
+	
+	Hier wurde ein erweitertes Messverfahren \cite{website:amp_psrr_cmrr_circuits} verwendet.
+	\begin{enumerate}
+		\item Die Kurven $V_{cm}$ und $V_{offset}$ auswählen.
+		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Peak To Peak $\Rightarrow 2\hat{V}_{cm}$
+		\item $ CMRR = 20 * log_{10} \frac{2\hat{V}_{cm}}{2\hat{V}_{offset}}$
+	\end{enumerate}
+	
+	\minisec{PSRR}	
+	Datei: \emph{RC4558 - psrr}
+	
+	Hier wurde ein erweitertes Messverfahren \cite{website:amp_psrr_cmrr_circuits} verwendet.
+	\begin{enumerate}
+		\item Die Kurven $V_{dd}$ und $V_{offset}$ auswählen.
+		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Peak To Peak $\Rightarrow 2\hat{V}_{dd}$
+		\item $ PSRR = 20 * log_{10} \frac{2\hat{V}_{dd}}{2\hat{V}_{offset}}$
+	\end{enumerate}
+	
+	\minisec{Open loop gain}	
+	Datei: \emph{RC4558 - olgain}
+	
+	Hier wurde ein erweitertes Messverfahren \cite{website:amp_psrr_cmrr_circuits} verwendet.
+	\begin{enumerate}
+		\item Die Kurve $Gain$ auswählen.
+		\item Measure $\rightarrow$ Maximum
+	\end{enumerate}
+	
+	
+	\minisec{Gain bandwidth product}
+	Datei: \emph{RC4558 - unity gain bandwidth}
+	\begin{enumerate}
+		\item Die Kurve $Gain$ auswählen
+		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Lowpass \SI{-3}{\decibel} (db Plot, auto) $\Rightarrow f_{3dB}$
+		\item $ GBP = A \cdot f_{3dB} = 10 \cdot f_{3dB} $
+	\end{enumerate}
+	
+	\minisec{Voltage swing}
+	\begin{enumerate}
+		\item Die Kurven $V_{out RL=100G}$, $V_{out RL=10k}$, $V_{out RL=2k}$ auswählen. $R_L=\SI{100}{\giga\ohm}$ simuliert den Leerlauf.
+		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Peak To Peak $\Rightarrow 2\hat{V}$
+		\item $V_{swing} = \pm \frac{2\hat{V}}{2}$
 	\end{enumerate}
 
 \listoffigures

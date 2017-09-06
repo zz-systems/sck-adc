@@ -1,0 +1,80 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 2.8 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \sortlist[entry]{none/global/}
+    \entry{datasheet:LT1800}{online}{}
+      \field{sortinit}{1}
+      \field{sortinithash}{27a2bc5dfb9ed0a0422134d636544b5d}
+      \field{labeltitlesource}{title}
+      \field{subtitle}{{$\SI{80}{\mega\hertz}$}, {$\SI[per-mode=symbol]{25}{\volt\per\micro\second}$} Low Power Rail-to-Rail Input and Output Precision Op Amp}
+      \field{title}{LT1800}
+      \field{urlday}{24}
+      \field{urlmonth}{8}
+      \field{urlyear}{2017}
+      \field{year}{2009}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb ../1800fa.pdf
+      \endverb
+      \verb{url}
+      \verb http://cds.linear.com/docs/en/datasheet/1800fa.pdf
+      \endverb
+    \endentry
+    \entry{datasheet:RC4558}{online}{}
+      \field{sortinit}{3}
+      \field{sortinithash}{197da6d6c34c6b20ce45c4d4baace5a4}
+      \field{labeltitlesource}{title}
+      \field{month}{10}
+      \field{subtitle}{RC4558 Dual General-Purpose Operational Amplifier}
+      \field{title}{RC4558}
+      \field{urlday}{25}
+      \field{urlmonth}{8}
+      \field{urlyear}{2017}
+      \field{year}{2014}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb ../rc4558.pdf
+      \endverb
+      \verb{url}
+      \verb http://www.ti.com/lit/ds/symlink/rc4558.pdf
+      \endverb
+    \endentry
+    \entry{website:amp_psrr_cmrr_circuits}{online}{}
+      \field{sortinit}{6}
+      \field{sortinithash}{02bbed3ed82f61ae046619460488516d}
+      \field{labeltitlesource}{title}
+      \field{day}{19}
+      \field{month}{2}
+      \field{title}{Measuring amplifier DC offset voltage, PSRR, CMRR, and open-loop gain}
+      \field{urlday}{25}
+      \field{urlmonth}{8}
+      \field{urlyear}{2017}
+      \field{year}{2014}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{url}
+      \verb http://www.edn.com/electronics-blogs/bakers-best/4428555/Measuring-amplifier-DC-offset-voltage--PSRR--CMRR--and-open-loop-gain
+      \endverb
+    \endentry
+  \endsortlist
+\endrefsection
+\endinput
+
