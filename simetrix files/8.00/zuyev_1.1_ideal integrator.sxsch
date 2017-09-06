@@ -336,7 +336,7 @@ Property name="MODEL" value="A" autopos=1 normal=Left rotated=Left visible=0 fon
 Property name="REF" value="U1" autopos=1 normal=Right rotated=Right font=Default order=-1
 Property name="StyleNormal" value="DefaultInstance" autopos=1 normal=Left rotated=Left visible=0 font=Default order=-1
 Property name="StyleSelected" value="DefaultSelected" autopos=1 normal=Left rotated=Left visible=0 font=Default order=-1
-Property name="VALUE" value="Period=1.01m width=10u delay=1m" autopos=1 normal=Right rotated=Right visible=0 font=Default order=-1
+Property name="value" value="Period=1.001m width=1u delay=1m" autopos=1 normal=Right rotated=Right visible=0 font=Default order=-1
 Netnames pin1="U1_pin_1"
 .EndInstance
 .Instance
@@ -344,7 +344,7 @@ Attributes type=symbol name="vsrc" selected=0 protected=0 x=240 y=840 orient=N0
 Property name="MODEL" value="V" autopos=1 normal=Left rotated=Left visible=0 font=Default order=-1
 Property name="StyleNormal" value="DefaultInstance" autopos=1 normal=Left rotated=Left visible=0 font=Default order=-1
 Property name="StyleSelected" value="DefaultSelected" autopos=1 normal=Left rotated=Left visible=0 font=Default order=-1
-Property name="value" value="5" autopos=1 normal=Right rotated=Top font=Default order=1
+Property name="value" value="10" autopos=1 normal=Right rotated=Top font=Default order=1
 Property name="REF" value="V1" autopos=1 normal=Right rotated=Bottom font=Default order=2
 Netnames pin1="Vdd" pin2="0"
 .EndInstance
@@ -353,7 +353,7 @@ Attributes type=symbol name="vsrc" selected=0 protected=0 x=1200 y=840 orient=N0
 Property name="MODEL" value="V" autopos=1 normal=Left rotated=Left visible=0 font=Default order=-1
 Property name="StyleNormal" value="DefaultInstance" autopos=1 normal=Left rotated=Left visible=0 font=Default order=-1
 Property name="StyleSelected" value="DefaultSelected" autopos=1 normal=Left rotated=Left visible=0 font=Default order=-1
-Property name="value" value="0" autopos=1 normal=Right rotated=Top font=Default order=1
+Property name="value" value="5" autopos=1 normal=Right rotated=Top font=Default order=1
 Property name="REF" value="V2" autopos=1 normal=Right rotated=Bottom font=Default order=2
 Netnames pin1="Vbias" pin2="0"
 .EndInstance
@@ -362,7 +362,7 @@ Attributes type=symbol name="vsrc" selected=0 protected=0 x=1680 y=840 orient=N0
 Property name="MODEL" value="V" autopos=1 normal=Left rotated=Left visible=0 font=Default order=-1
 Property name="StyleNormal" value="DefaultInstance" autopos=1 normal=Left rotated=Left visible=0 font=Default order=-1
 Property name="StyleSelected" value="DefaultSelected" autopos=1 normal=Left rotated=Left visible=0 font=Default order=-1
-Property name="value" value="-1" autopos=1 normal=Right rotated=Top font=Default order=1
+Property name="value" value="4" autopos=1 normal=Right rotated=Top font=Default order=1
 Property name="REF" value="V3" autopos=1 normal=Right rotated=Bottom font=Default order=2
 Netnames pin1="Vin" pin2="0"
 .EndInstance
@@ -372,7 +372,7 @@ Property name="MODEL" value="V" autopos=1 normal=Left rotated=Left visible=0 fon
 Property name="ref" value="V4" autopos=1 normal=Right rotated=Bottom font=Default order=-1
 Property name="StyleNormal" value="DefaultInstance" autopos=1 normal=Left rotated=Left visible=0 font=Default order=-1
 Property name="StyleSelected" value="DefaultSelected" autopos=1 normal=Left rotated=Left visible=0 font=Default order=-1
-Property name="value" value="-5" autopos=1 normal=Right rotated=Top font=Default order=1
+Property name="value" value="0" autopos=1 normal=Right rotated=Top font=Default order=1
 Netnames pin1="Vss" pin2="0"
 .EndInstance
 .Instance
@@ -383,7 +383,7 @@ Property name="REF" value="X1" autopos=1 normal=Top rotated=Right linear=1 font=
 Property name="SIMULATOR" value="DUAL" autopos=0 x=0 y=1440 align=LeftBase visible=0 font=Default order=-1
 Property name="StyleNormal" value="DefaultInstance" autopos=1 normal=Left rotated=Left visible=0 font=Default order=-1
 Property name="StyleSelected" value="DefaultSelected" autopos=1 normal=Left rotated=Left visible=0 font=Default order=-1
-Property name="VALUE" value="VOS=0 IB=0 IBOS=0 A0=1G GBW=100Meg SR_POS=1G SR_NEG=1G CMRR=1G PSRR=1G RIN=1G ROUT=0 IQ=1m VDIFF_POS=0 VDIFF_NEG=0 VOFF_TOL=0" autopos=1 normal=Bottom rotated=Left visible=0 font=Default order=-1
+Property name="VALUE" value="VOS=0 IB=0 IBOS=0 A0=1G GBW=3Meg SR_POS=1G SR_NEG=1G CMRR=1G PSRR=1G RIN=1G ROUT=0 IQ=1m VDIFF_POS=0 VDIFF_NEG=0 VOFF_TOL=0" autopos=1 normal=Bottom rotated=Left visible=0 font=Default order=-1
 Netnames pin1="Vbias" pin2="S1_N" pin3="Vdd" pin4="Vss" pin5="S1_P"
 .EndInstance
 Wire x1=240 y1=720 x2=240 y2=840 net="Vdd" branch="+:V1#P"
@@ -563,10 +563,10 @@ Property name="StyleNormal" value="DefaultWire" autopos=1 normal=Left rotated=Le
 Property name="StyleSelected" value="DefaultSelected" autopos=1 normal=Left rotated=Left visible=0 font=Default order=-1
 .EndWire
 Text value=".SIMULATOR SIMETRIX\n.TRAN 2m\n.OPTIONS minTimeStep=1f\n+  conv=2\n+  abstol=1n\n+  cshuntsub\n9.SIMULATOR SIMETRIX\n.SIMULATOR DEFAULT\n"
-LicenseInfo version="8.00p" feats=Basic|AD|Micron|Mcore2|Schematic|Advanced|Sim|Demo|Rtn|SIMPLIS_IF|beta serial=unknown user="unknown" code=unknown product="Elements" binarch=x86 system="WINNT/10.0/x64/8588939264/4/1/4/1507694180"
+LicenseInfo version="8.00p" feats=Basic|AD|Micron|Mcore2|Schematic|Advanced|Sim|Scripts|Demo|Rtn|SIMPLIS_IF|beta serial=unknown user="unknown" code=unknown product="Elements" binarch=x86 system="WINNT/10.0/x64/8588939264/4/1/4/1507694180"
 SimulatorMode value="SIMetrix"
 View x=0 y=0 zoomlevel=31 zoom=8 snapgrid=120 offsetX=0 offsetY=0
-Property name="CurrentMeasureItem" value="Fall Time 10%-90% (auto)|0|0|0|" type=value
-Property name="UserVersion" value="11" type=value
+Property name="CurrentMeasureItem" value="Frequency|0|0|0|" type=value
+Property name="UserVersion" value="15" type=value
 .EndSchematic
 .EndComponent
