@@ -6,8 +6,8 @@
 *** Serial Number:                                                                                                                  ***
 *** User:                                                                                                                           ***
 ***                                                                                                                                 ***
-*** TITLE:   * \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\8.00\RC4558\zuyev_1.4_RC4558 - dual slope adc.wxsch***
-*** NETLIST: \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\8.00\RC4558\design.net                               ***
+*** TITLE:   * \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\8.00\LT1800\zuyev_1.4_LT1800 - dual slope adc.wxsch***
+*** NETLIST: \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\8.00\LT1800\design.net                               ***
 ***                                                                                                                                 ***
 ***************************************************************************************************************************************
 
@@ -20,23 +20,23 @@
 #SIMETRIX
 .GRAPH CLK_pin_1 axisType="digital" persistence=-1 curveLabel="CLK" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
 .GRAPH Vin curveLabel= Vin nowarn=true ylog=auto xlog=auto analysis=tran|ac|dc disabled=false 
-X1 Vbias S1_P Vdd Vss cmp-out RC4558 pinnames: inp inn vsp vsn out
-X2 Vbias S1_N Vdd Vss S1_P RC4558 pinnames: inp inn vsp vsn out
-X3 Vbias R3_P Vdd Vss X3_out RC4558 pinnames: inp inn vsp vsn out
-R1 S1_N X3_out 10k
-R2 X3_out R3_P 200
+X1 Vbias R3_P Vdd Vss X1_out LT1800 pinnames: inp inn vsp vsn out
+X2 Vbias S1_N Vdd Vss S1_P LT1800 pinnames: inp inn vsp vsn out
+X3 Vbias S1_P Vdd Vss cmp-out LT1800 pinnames: inp inn vsp vsn out
+R1 S1_N X1_out 10k
+R2 X1_out R3_P 200
 R3 R3_P S2_P 200
 R4 R4_P Vin 600
-V6 Vdd 0 15
-V7 Vss 0 -15
-V8 Vref 0 -1
-V9 Vbias 0 0
+V6 Vdd 0 5
+V7 Vss 0 0
+V8 Vref 0 1.5
+V9 Vbias 0 2.5
 X$ARB1 Vin dac-out ARB1_OUT $$arbsourceARB1 pinnames: vin dac-out OUT 
 .subckt $$arbsourceARB1 vin dac-out OUT 
 B$OUT OUT 0 V=V(Vin)-V(dac-out) 
 .ends
 A$U10 DEINT S2_CP HC04D
-X$V10 Vin 0 TRI_SOURCE pinnames: P N params: _V1=0 _V2=4 _FREQ=10 _DELAY=0 _DRATIOx100=50 _T_RISE=50m _T_FALL=50m _DAMP_COEF=0 _PWIDTH=0 _OFF_UNTIL_DELAY=0 _IDLE_IN_POP=0 _USEPHASE=0 _PHASE=0
+X$V10 Vin 0 TRI_SOURCE pinnames: P N params: _V1=2.5 _V2=4.5 _FREQ=10 _DELAY=0 _DRATIOx100=50 _T_RISE=50m _T_FALL=50m _DAMP_COEF=0 _PWIDTH=0 _OFF_UNTIL_DELAY=0 _IDLE_IN_POP=0 _USEPHASE=0 _PHASE=0
 A$U1 [CLK_pin_1] [BUS1#0 BUS1#1 BUS1#2 BUS1#3 BUS1#4 BUS1#5 BUS1#6 BUS1#7 DEINT RST] $$CounterU1 
 .model $$CounterU1 d_logic_block file=$$counterU1 user=[10n]
 .file $$counterU1 
@@ -49,7 +49,7 @@ X$S3 S2_P Vref DEINT 0 gen_switch : RON=1  ROFF=1Meg VON=3  VOFF=2  pinnames: P 
 A$U7 [BUS2#0 BUS2#1 BUS2#2 BUS2#3 BUS2#4 BUS2#5 BUS2#6 BUS2#7] dac-out $$DACU7 
 .model $$DACU7 DA_Converter 
 + output_slew_time=1e-007 
-+ output_range=4 output_offset=2 
++ output_range=2 output_offset=3.5 
 C2 S1_P S1_N 100n IC=0  BRANCH={IF(ANALYSIS=2,1,0)}
 A$CLK CLK_pin_1 CLK$TP_DPULSE : Period=3.2u width=1.6u delay=0 
 .model CLK$TP_DPULSE d_pulse period=1u min_sink=-0.02 max_source=0.02
@@ -87,64 +87,168 @@ V1 1 2 PWLS TRI
 + OFF_UNTIL_DELAY={_OFF_UNTIL_DELAY} 
 + END
 .ENDS
-.SUBCKT RC4558   1 2 3 4 5
+.SUBCKT LT1800 3 2 7 4 6
+XLT1800 3 2 7 4 6 LT1800MD
+.ENDS LT1800
 *
-C1   11 12 2.664E-12
-C2    6  7 20.00E-12
-DC    5 53 DX
-DE   54  5 DX
-DLP  90 91 DX
-DLN  92 90 DX
-DP    4  3 DX
-EGND 99  0 POLY(2) (3,0) (4,0) 0 .5 .5
-FB    7 99 POLY(5) VB VC VE VLP VLN 0 6.365E6 -6E6 6E6 6E6 -6E6
-GA 6  0 11 12 418.0E-6
-GCM   0  6 10 99 6.705E-9
-IEE   3 10 DC 34.28E-6
-HLIM 90  0 VLIM 1K
-Q1   11  2 13 QX
-Q2   12  1 14 QX
-R2    6  9 100.0E3
-RC1   4 11 2.652E3
-RC2   4 12 2.652E3
-RE1  13 10 1.122E3
-RE2  14 10 1.122E3
-REE  10 99 5.834E6
-RO1 8  5 125
-RO2 7 99 125
-RP    3  4 24.67E3
-VB    9  0 DC 0
-VC    3 53 DC 2.600
-VE   54  4 DC 2.600
-VLIM  7  8 DC 0
-VLP  91  0 DC 25
-VLN   0 92 DC 25
-.MODEL DX D(IS=800.0E-18)
-.MODEL QX PNP(IS=800.0E-18 BF=121.4)
-.ENDS
+.SUBCKT LT1800MD 1 2 3 4 5
 *
-* File: RC4559.301
+* back-to-back diodes
+DIP1 1 114 DX
+DIP2 114 2 DX
+DIP3 2 115 DX
+DIP4 115 1 DX
 *
-* RC4559 OPERATIONAL AMPLIFIER "MACROMODEL" SUBCIRCUIT
-* CREATED USING PARTS RELEASE 4.01 ON 09/14/89 AT 08:35
-* (REV N/A)      SUPPLY VOLTAGE: +/-15V
-* CONNECTIONS:   NON-INVERTING INPUT
-*                | INVERTING INPUT
-*                | | POSITIVE POWER SUPPLY
-*                | | | NEGATIVE POWER SUPPLY
-*                | | | | OUTPUT
-*                | | | | |
+* ESD diodes
+DIP5 1 3 DX
+DIP6 4 1 DX
+DIP7 2 3 DX
+DIP8 4 2 DX
+*
+* reverse input protection
+DIP9  11 1 DX
+DIP10 12 2 DX
+*
+* bias  current for Vin > Vdd -1.3V (NPN stage active)
+GNPN1 3 500  POLY(2) 1 3  2 3  1.10E-3  5.0e-4  5.0e-4
+RNPN1 500  3  1.0e+005
+DNPN1 3  500 DX
+DNPN2 500 501 DX
+DNPN3  501  502 DX
+VNPN2  502 3 DC 0.27
+RNPN2 501 3 1.0E6
+GNPN2  3  1  501 3  -5.50E-7
+GNPN3  3  2  501 3  -5.25E-7
+*
+* input stage
+CIN 1 2 2.0000e-013
+CIC1 1 99 1.8000e-012
+CIC2 2 99 1.8000e-012
+GRIN 1 2 1 2 9.3010e-008
+VCMEP 303 3 DC 0.8
+VCMEN 4 304 DC 1.6
+Q1 11 2 13 Q1
+Q2 12 111 14 Q2
+RC1 304 11 2.1869e+003
+RC2 304 12 2.1869e+003
+RE1 10 13 8.2191e+000
+RE2 10 14 8.2191e+000
+C1 11 12 3.0324e-013
+IEE 303 10 DC 9.1456e-004
+D1 10 303 DX
+GA 60 99 11 12 4.5727e-004
+*
+* noise sources
+FRI1 99 1 VRI1 1
+VRI1 101 0 DC 0
+RRI1 101 0 1.6483e+004
+FRI2 99 2 VRI2 1
+VRI2 201 0 DC 0
+RRI2 201 0 1.6483e+004
+GR 99 60 605 606 6.3286e+000
+IR1 0 605 DC 1
+IR2 0 606 DC 1
+DR1 605 0 DR
+DR2 606 0 DR
+*
+* common mode rejection
+GCM1 99 20 POLY(2) 1 99 2 99 0 5.0000e-004 5.0000e-004
+RCM1 21 99 1.000000e+003
+RCM2 20 99 1.0000e+006
+LCM 20 21 1.0610e-003
+ECM 111 1 20 99 1.0000e-005
+*
+* frequency shaper
+RP1 601 99 3.6364e+003
+CP1 60 601 1.4589e-012
+RP11 60 99 1.0000e+004
+GP1 99 61 60 99 1.0000e-004
+RP2 61 99 1.0000e+004
+CP2 61 99 3.1831e-013
+GP2 99 62 61 99 1.0000e-004
+RP3 621 99 1.3333e+004
+LP3 62 621 7.0736e-005
+RP33 62 99 4.0000e+004
+GP3 99 6 62 99 1.0000e-004
+*
+* output stage
+R2 6 99 1.0000e+003
+C2 6 7 3.2000e-011
+GB 7 99 6 99 4.4227e+002
+R01 7 99 1.1900e+001
+R02 7 50 1.0000e-001
+R03 50 5 1.2000e+001
+R04 5 99 5.9379e+009
+VC 53 50 DC 1.2090e-001
+VE 54 50 DC -1.1290e-001
+DC1 53 55 DVC
+DC2 55 56 DVC
+DE1 57 54 DVC
+DE2 58 57 DVC
+GVC1 3 56 3 56 1.0E-4
+GVE1 4 58 4 58 1.0E-4
+GVC2 3 55 3 55 1.0E-5
+GVE2 4 57 4 57 1.0E-5
+GVLP 99 6 56 3 1.0000e+000
+GVLN 99 6 58 4 1.0000e+000
+ECLP 91 0 7 50 2.2222e+002
+ECLN 92 0 7 50 2.2222e+002
+DCLP 91 90 DX
+DCLN 90 92 DX
+VLIM 90 0 DC 0
+FB 7 99 VLIM 7.7509e+000
+*
+* output protection diodes
+DOPP 5 3 DX
+DOPN 4 5 DX
+*
+* supply characteristic
+EGND 99 0 POLY(2) 3 0 4 0 0 0.5 0.5
+DSUB 4 3 DX
+IP 3 4 DC 6.8544e-004
+*
+GPC 31 0 7 50 1.0000e+001
+DPC1 3 31 DVC
+DPC2 32 4 DVC
+RPC1 31 32 1.0E6
+RPC2 31 33 9.7531
+EPC 33 32 3 4 1.0
+*
+.MODEL DX D (IS=8.2592e-016 RS=0 XTI=1 CJO=0 IBV=1.0E-10 TT=0)
+.MODEL DVC D (IS=8.2592e-016 RS=0 XTI=-2.1 N=0.1 EG=0.1 CJO=0 IBV=1.0E-10 TT=0)
+.MODEL Q1 PNP (IS=1.0016e-015 BF=60969.9 XTB=-7.3897e+000
++ XTI=3.00712e+000 KF=2.0803e-014)
+.MODEL Q2 PNP (IS=9.9842e-016 BF=182909.8 XTB=-7.3897e+000
++ XTI=2.99288e+000 KF=2.0803e-014)
+.MODEL DR D (IS=8.2592e-016 KF=6.4391e-017 RS=0 XTI=1 CJO=0 IBV=1.0E-10 TT=0)
+.ENDS LT1800MD
+*
+***
+*
+* ----------------------------
+*  terminal definitions 
+* ----------------------------
+*& INP 3
+*& INN 2
+*& VDD 7
+*& VSS 4
+*& OUTP 6
+*& SHDN 1
+*& GND 0
+*& CKT LT1806
+* ----------------------------
+*
 .model HC04D d_inverter
 + rise_delay = 5.5n
 + fall_delay = 5.5n
 + out_res = 40
 + input_load = 4.5p
 + family = "HC"
-a$BRIDGE_29 DEINT#_out DEINT UNIV_dac
-a$BRIDGE_30 DEINT DEINT#_in HC_adc
-a$BRIDGE_31 cmp-out cmp-out#_in UNIV_adc
-a$BRIDGE_32 RST#_out RST UNIV_dac
-a$BRIDGE_33 S2_CP#_out S2_CP HC_dac
+a$BRIDGE_36 DEINT#_out DEINT UNIV_dac
+a$BRIDGE_37 DEINT DEINT#_in HC_adc
+a$BRIDGE_38 cmp-out cmp-out#_in UNIV_adc
+a$BRIDGE_39 RST#_out RST UNIV_dac
+a$BRIDGE_40 S2_CP#_out S2_CP HC_dac
 
 .model UNIV_adc adc_bridge 
 + in_low=2.1 
@@ -206,135 +310,20 @@ a$BRIDGE_33 S2_CP#_out S2_CP HC_dac
 *** Analysis card: .TRAN 100m                                                ***
 ***                                                                          ***
 ********************************************************************************
-********************************************************************************
-***                                                                          ***
-***                            Simulation Options                            ***
-***                                                                          ***
-********************************************************************************
-RELTOL                    0.001
-ABSTOL                    1e-009
-VNTOL                     1e-006
-POINTTOL                  0.001
-TEMPERATURE               27C
-GMIN                      1e-012
-Matrix Solver             UF KLU Version 1.1
 
-
-
-********************************************************************************
-***                                                                          ***
-***                             Device parameters                            ***
-***                                                                          ***
-********************************************************************************
-Model parameters for devices of type BJT
-========================================
-Model:       X1.QX        X2.QX        X3.QX        
-
-_is          800a         800a         800a         
-bf           121.4        121.4        121.4        
-
-
-Model parameters for devices of type Diode
-==========================================
-Model:       X1.DX        X2.DX        X3.DX        
-
-is           800a         800a         800a         
-
-
-Instance parameters for devices of type Vsource
-===============================================
-Instance:    V10.V1       
-Using model: $Vsource     
-
-
-
-Instance parameters for devices of type CAP1
-============================================
-Instance:    C2           
-Using model: $CAP1        
-
-branch       1            
-
-
-Model parameters for devices of type Switch
-===========================================
-Model:       S1.SW        S2.SW        S3.SW        
-
-roff         1Meg         1Meg         1Meg         
-ron          1            1            1            
-voff         2            2            2            
-von          3            3            3            
-
-
-Model parameters for devices of type d_pulse
-============================================
-Model:       CLK$TP_DPULS 
-             E            
-
-max_source   20m          
-min_sink     -20m         
-period       1u           
-
-
-Model parameters for devices of type d_inverter
-===============================================
-Model:       HC04D        
-
-fall_delay   5.5n         
-input_load   4.5p         
-out_res      40           
-rise_delay   5.5n         
-
-
-Model parameters for devices of type adc_bridge
-===============================================
-Model:       HC_adc       UNIV_adc     
-
-clamp_bias   500m         500m         
-clamp_res    10           10           
-fall_delay   1p           1p           
-in_high      2.2          2.2          
-in_low       2.1          2.1          
-out_high     5            5            
-out_low      0            0            
-rise_delay   1p           1p           
-
-
-Model parameters for devices of type da_converter
-=================================================
-Model:       $$DACU7      
-
-output_offse 2            
-output_range 4            
-output_slew_ 100n         
-
-
-Model parameters for devices of type dac_bridge
-===============================================
-Model:       HC_dac       UNIV_dac     
-
-g_hiz        1n           1n           
-g_pulldown   34m          34m          
-g_pullup     24m          24m          
-input_load   -31p         -31p         
-knee_high    2.75         2.75         
-knee_low     2            2            
-out_high     5            5            
-t_fall       2n           2n           
-t_rise       2n           2n           
-v_smooth     500m         500m         
-
+*** ERROR *** The circuit is too large to simulate with this version.
+Too many analog nodes
 
 Analysis statistics
 ===================
 
 Nominal temperature = 27
 Operating temperature = 27
-Total iterations = 41397
-Transient iterations = 41384
-Transient timepoints = 14991
-Accepted timepoints = 13210
-Total analysis time = 1.688
+Total iterations = 0
+Transient iterations = 0
+Transient timepoints = 0
+Accepted timepoints = 0
+Total analysis time = 0
 Transient time = 0
 Matrix reordering time = 0
 L-U decomposition time = 0
@@ -347,15 +336,15 @@ Simulator initialise time = 0
 Data write time = 0
 Convergence test time = 0
 LTE time = 0
-JI2 Iterations = 13
+JI2 Iterations = 0
 Diag. GMIN stepping iterations = 0
 Junc. GMIN stepping iterations = 0
 Source stepping iterations = 0
 PTA iterations = 0
-Number of matrix fill ins = -95
-Number of initial matrix elements = 340
-Circuit equations = 95
-State vector size = 462
+Number of matrix fill ins = 0
+Number of initial matrix elements = 0
+Circuit equations = 191
+State vector size = 982
 Number of write buffer faults = 0
 EVT outputs = 22
 EVT ports = 44
@@ -365,6 +354,6 @@ EVT nodes = 22
 Run statistics
 ==============
 
-Netlist read in time = 0.078
-Total run time = 2.453 seconds
+Netlist read in time = 0.016
+Total run time = 0.141 seconds
 Analysis concluded 07.09.17 19:47

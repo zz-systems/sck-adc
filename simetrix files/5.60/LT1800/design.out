@@ -1,15 +1,15 @@
-**************************************************************************************************************************************
-***                                                                                                                                ***
-*** SIMetrix/SIMPLIS Intro Version 5.60a (x86) - 07.09.17 16:52:23                                                                 ***
-*** Platform: Windows NT version 6.2                                                                                               ***
-*** Architecture: x64                                                                                                              ***
-*** Serial Number:                                                                                                                 ***
-*** User:                                                                                                                          ***
-***                                                                                                                                ***
-*** TITLE:   * \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\5.60\LT1800\zuyev_1.4_LT1800 - voltage swing.sxsch***
-*** NETLIST: \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\5.60\LT1800\design.net                              ***
-***                                                                                                                                ***
-**************************************************************************************************************************************
+*****************************************************************************************************************************************
+***                                                                                                                                   ***
+*** SIMetrix/SIMPLIS Intro Version 5.60a (x86) - 07.09.17 19:38:10                                                                    ***
+*** Platform: Windows NT version 6.2                                                                                                  ***
+*** Architecture: x64                                                                                                                 ***
+*** Serial Number:                                                                                                                    ***
+*** User:                                                                                                                             ***
+***                                                                                                                                   ***
+*** TITLE:   * \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\5.60\LT1800\zuyev_1.4_LT1800 - single slope adc.sxsch***
+*** NETLIST: \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\5.60\LT1800\design.net                                 ***
+***                                                                                                                                   ***
+*****************************************************************************************************************************************
 
 ********************************************************************************
 ***                                                                          ***
@@ -17,21 +17,53 @@
 ***                                                                          ***
 ********************************************************************************
 
-X1 Vbias R7_P Vdd Vss X1_out LT1800 pinnames: inp inn vsp vsn out
-V1 Vdd 0 5
-V2 Vss 0 0
-V3 Vin 0 PULSE 1.5 3.5 0 100u 100u 0 200u
-V4 Vbias 0 2.5
-R7 R7_P Vin 1K
-R8 X1_out R7_P 20k
-RL X1_out 0 200
-.GRAPH RL#P axisType="auto" persistence=-1 curveLabel="I(RL)" analysis="tran|ac|dc" xLog="auto" yLog="lin"  nowarn=true disabled=false 
-.GRAPH Vin axisType="grid" axisName="Linear output range" persistence=-1 curveLabel="Vin" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
-.GRAPH X1_out axisType="grid" axisName="Linear output range" persistence=-1 curveLabel="VOut" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
-.GRAPH Vdd axisType="grid" axisName="Linear output range" persistence=-1 curveLabel="Vdd" analysis="tran|ac|dc" order="##" xLog="auto" yLog="auto"  nowarn=true disabled=false 
-.GRAPH Vss axisType="grid" axisName="Linear output range" persistence=-1 curveLabel="Vss" analysis="tran|ac|dc" order="##" xLog="auto" yLog="auto"  nowarn=true disabled=false 
-.TRAN 1m SWEEP DEVICE=RL LIST  100G 1k 250
-.TEMP 25
+.GRAPH cmp-out axisType="digital" persistence=-1 curveLabel="cmp-out" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+X1 Vbias S2_N Vdd Vss S2_P LT1800 pinnames: inp inn vsp vsn out
+.GRAPH RST axisType="digital" persistence=-1 curveLabel="RST" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+X2 S2_P Vin Vdd Vss cmp-out LT1800 pinnames: inp inn vsp vsn out
+.GRAPH dac-out axisType="auto" persistence=-1 curveLabel="dac-out" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+V1 Vin 0 PULSE 2.5 4.5 0 50m 50m 0 100m
+.GRAPH ARB2_OUT axisType="grid" persistence=-1 curveLabel="Error" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+R2 S2_N Vref 1k
+.GRAPH S2_P axisType="auto" persistence=-1 curveLabel="int-out" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH "ComposeDigital('BUS2', [-1, -1],  ''  , '%BUSNAME%#%WIRENUM%'  , [0.8, 0.9] )*1.0+0" complete=true  axistype=digital   bus=dec curveLabel="adc-out" disabled=false 
+.KEEP ^BUS2#*
+V6 Vdd 0 5
+V7 Vss 0 0
+V8 Vref 0 1.5
+V9 Vbias 0 2.5
+A$CLK1 CLK1_pin_1 CLK1$TP_DPULSE : Period=1.6u width=800n delay=0 
+.model CLK1$TP_DPULSE d_pulse period=1u min_sink=-0.02 max_source=0.02
+X$ARB2 Vin dac-out ARB2_OUT $$arbsourceARB2 pinnames: vin dac-out OUT 
+.subckt $$arbsourceARB2 vin dac-out OUT 
+B$OUT OUT 0 V=V(Vin)-V(dac-out) 
+.ends
+X$S2 S2_P S2_N RST 0 gen_switch : RON=1  ROFF=1Meg VON=3  VOFF=2  pinnames: P N CP CN
+A$U4 [CLK1_pin_1] [BUS1#0 BUS1#1 BUS1#2 BUS1#3 BUS1#4 BUS1#5 BUS1#6 BUS1#7 RST] $$CounterU4 
+.model $$CounterU4 d_logic_block file=$$counterU4 user=[10n]
+.file $$counterU4 
+A$U5 [BUS2#0 BUS2#1 BUS2#2 BUS2#3 BUS2#4 BUS2#5 BUS2#6 BUS2#7] dac-out $$DACU5 
+.model $$DACU5 DA_Converter 
++ output_slew_time=1e-007 
++ output_range=2 output_offset=3.5 
+A$U6 [BUS1#0 BUS1#1 BUS1#2 BUS1#3 BUS1#4 BUS1#5 BUS1#6 BUS1#7 cmp-out] [BUS1#0 BUS1#1 BUS1#2 BUS1#3 BUS1#4 BUS1#5 BUS1#6 BUS1#7] $$RegisterU6 
+.model $$RegisterU6 d_logic_block file=$$registerU6 user=[1n,20n] 
+.file $$registerU6 
+C1 S2_P S2_N 100n IC=0  BRANCH={IF(ANALYSIS=2,1,0)}
+.GRAPH Vin curveLabel= Vin nowarn=true ylog=auto xlog=auto analysis=tran|ac|dc disabled=false 
+.GRAPH CLK1_pin_1 axisType="digital" persistence=-1 curveLabel="CLK" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH "ComposeDigital('BUS1', [-1, -1],  ''  , '%BUSNAME%#%WIRENUM%'  , [0.8, 0.9] )*1.0+0" complete=true  axistype=digital   bus=dec curveLabel="cnt-out" disabled=false 
+.KEEP ^BUS1#*
+.TRAN 100m
+.OPTIONS minTimeStep=1f
++  conv=2
++  abstol=1n
+*** Warning *** Unrecognised option 'conv'
+
+.subckt gen_switch 1 2 3 4
+S1 1 2 3 4 SW
+.model SW VSWITCH RON={ron} ROFF={roff} VON={von} VOFF={voff}
+.ends
 .SUBCKT LT1800 3 2 7 4 6
 XLT1800 3 2 7 4 6 LT1800MD
 .ENDS LT1800
@@ -183,66 +215,62 @@ EPC 33 32 3 4 1.0
 *& CKT LT1806
 * ----------------------------
 *
+a$BRIDGE_257 cmp-out cmp-out#_in UNIV_adc
+a$BRIDGE_258 RST#_out RST UNIV_dac
+
+.model UNIV_adc adc_bridge 
++ in_low=2.1 
++ in_high=2.2 
++ rise_delay=1e-12 
++ fall_delay=1e-12
++ out_family = "UNIV"
++ out_low = 0
++ out_high = 5
++ clamp_bias=0.5
++ clamp_res=10
+********************************************************
+**                                                     *
+**               4000 series CMOS 15Volt               *
+**                                                     *
+********************************************************
+.model UNIV_dac dac_bridge 
++ out_high=5        ; Logic high voltage
++ input_load=-31p   ; Compensates for added rise and fall time
++ t_rise=2n         ; Output rise time
++ t_fall=2n         ; Output fall time
++ g_pullup=0.024    ; 1/(logic high output resistance)
++ g_pulldown=0.034  ; 1/(logic low output resistance)
++ g_hiz=1e-9        ; 1/(high impedance output res)
++ knee_low = 2.0    ; voltage at resistive/constant current knee logic low
++ knee_high =2.75   ; voltage at resistive/constant current knee logic high
++ v_smooth = 0.5    ; Knee smoothing band
++ in_family="UNIV"
+** Analog-Digital
+design.net (57): .OPTIONS minTimeStep=1f ...
+*** Warning *** Unrecognised option 'conv'
+
 
 ********************************************************************************
 ***                                                                          ***
-*** Starting Transient analysis at 16:52:23                                  ***
+*** Starting Transient analysis at 19:38:10                                  ***
 ***                                                                          ***
-*** Analysis card: .TRAN 1m SWEEP DEVICE=RL LIST  100G 1k 250                ***
-***                                                                          ***
-********************************************************************************
-
-********************************************************************************
-***                                                                          ***
-***                             Device parameters                            ***
+*** Analysis card: .TRAN 100m                                                ***
 ***                                                                          ***
 ********************************************************************************
-Model parameters for devices of type BJT
-========================================
-Model:       X1.XLT1800.  X1.XLT1800.  
-             Q1           Q2           
 
-bf           60.9699k     182.9098k    
-is           1.0016f      998.42a      
-kf           20.803f      20.803f      
-xtb          -7.3897      -7.3897      
-xti          3.00712      2.99288      
-
-
-Model parameters for devices of type Diode
-==========================================
-Model:       X1.XLT1800.  X1.XLT1800.  X1.XLT1800.  
-             DR           DVC          DX           
-
-cjo          0            0            0            
-eg           0            100m         0            
-ibv          100p         100p         100p         
-is           825.92a      825.92a      825.92a      
-kf           64.391a      0            0            
-n            0            100m         0            
-rs           0            0            0            
-tt           0            0            0            
-xti          1            -2.1         1            
-
-
-Instance parameters for devices of type Resistor
-================================================
-Instance:    RL           
-Using model: $Resistor    
-
-resistance   200          
-
+*** ERROR *** The circuit is too large to simulate with this version.
+Too many analog nodes
 
 Analysis statistics
 ===================
 
 Nominal temperature = 27
-Operating temperature = 25
-Total iterations = 5102
-Transient iterations = 5064
-Transient timepoints = 1317
-Accepted timepoints = 1136
-Total analysis time = 2.297
+Operating temperature = 27
+Total iterations = 0
+Transient iterations = 0
+Transient timepoints = 0
+Accepted timepoints = 0
+Total analysis time = 8.19682e-011
 Transient time = 0
 Matrix reordering time = 0
 L-U decomposition time = 0
@@ -251,22 +279,26 @@ Load time = 0
 Transient L-U decomp time = 0
 Transient solve time = 0
 Circuit build time = 0.016
-Simulator initialise time = 4.09273e-011
+Simulator initialise time = 8.19682e-011
 Data write time = 0
-JI2 Iterations = 38
+JI2 Iterations = 0
 Diag. GMIN stepping iterations = 0
 Junc. GMIN stepping iterations = 0
 Source stepping iterations = 0
 PTA iterations = 0
-Number of matrix fill ins = 49
-Number of initial matrix elements = 271
-Circuit equations = 66
-State vector size = 148
+Number of matrix fill ins = 0
+Number of initial matrix elements = 536
+Circuit equations = 130
+State vector size = 322
 Number of write buffer faults = 0
+EVT outputs = 19
+EVT ports = 38
+EVT instances = 6
+EVT nodes = 19
 
 Run statistics
 ==============
 
-Netlist read in time = 1.02432e-010
-Total run time = 2.359 seconds
-Analysis concluded 07.09.17 16:52:25
+Netlist read in time = 0.015
+Total run time = 0.063 seconds
+Analysis concluded 07.09.17 19:38:10

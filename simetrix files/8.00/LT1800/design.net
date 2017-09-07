@@ -1,24 +1,24 @@
-* \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\8.00\RC4558\zuyev_1.4_RC4558 - dual slope adc.wxsch
+* \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\8.00\LT1800\zuyev_1.4_LT1800 - dual slope adc.wxsch
 *#SIMETRIX
 .GRAPH CLK_pin_1 axisType="digital" persistence=-1 curveLabel="CLK" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
 .GRAPH Vin curveLabel= Vin nowarn=true ylog=auto xlog=auto analysis=tran|ac|dc disabled=false 
-X1 Vbias S1_P Vdd Vss cmp-out RC4558 pinnames: inp inn vsp vsn out
-X2 Vbias S1_N Vdd Vss S1_P RC4558 pinnames: inp inn vsp vsn out
-X3 Vbias R3_P Vdd Vss X3_out RC4558 pinnames: inp inn vsp vsn out
-R1 S1_N X3_out 10k
-R2 X3_out R3_P 200
+X1 Vbias R3_P Vdd Vss X1_out LT1800 pinnames: inp inn vsp vsn out
+X2 Vbias S1_N Vdd Vss S1_P LT1800 pinnames: inp inn vsp vsn out
+X3 Vbias S1_P Vdd Vss cmp-out LT1800 pinnames: inp inn vsp vsn out
+R1 S1_N X1_out 10k
+R2 X1_out R3_P 200
 R3 R3_P S2_P 200
 R4 R4_P Vin 600
-V6 Vdd 0 15
-V7 Vss 0 -15
-V8 Vref 0 -1
-V9 Vbias 0 0
+V6 Vdd 0 5
+V7 Vss 0 0
+V8 Vref 0 1.5
+V9 Vbias 0 2.5
 X$ARB1 Vin dac-out ARB1_OUT $$arbsourceARB1 pinnames: vin dac-out OUT 
 .subckt $$arbsourceARB1 vin dac-out OUT 
 B$OUT OUT 0 V=V(Vin)-V(dac-out) 
 .ends
 A$U10 DEINT S2_CP HC04D
-X$V10 Vin 0 TRI_SOURCE pinnames: P N params: _V1=0 _V2=4 _FREQ=10 _DELAY=0 _DRATIOx100=50 _T_RISE=50m _T_FALL=50m _DAMP_COEF=0 _PWIDTH=0 _OFF_UNTIL_DELAY=0 _IDLE_IN_POP=0 _USEPHASE=0 _PHASE=0
+X$V10 Vin 0 TRI_SOURCE pinnames: P N params: _V1=2.5 _V2=4.5 _FREQ=10 _DELAY=0 _DRATIOx100=50 _T_RISE=50m _T_FALL=50m _DAMP_COEF=0 _PWIDTH=0 _OFF_UNTIL_DELAY=0 _IDLE_IN_POP=0 _USEPHASE=0 _PHASE=0
 A$U1 [CLK_pin_1] [BUS1#0 BUS1#1 BUS1#2 BUS1#3 BUS1#4 BUS1#5 BUS1#6 BUS1#7 DEINT RST] $$CounterU1 
 .model $$CounterU1 d_logic_block file=$$counterU1 user=[10n]
 .file $$counterU1 
@@ -46,7 +46,7 @@ X$S3 S2_P Vref DEINT 0 gen_switch : RON=1  ROFF=1Meg VON=3  VOFF=2  pinnames: P 
 A$U7 [BUS2#0 BUS2#1 BUS2#2 BUS2#3 BUS2#4 BUS2#5 BUS2#6 BUS2#7] dac-out $$DACU7 
 .model $$DACU7 DA_Converter 
 + output_slew_time=1e-007 
-+ output_range=4 output_offset=2 
++ output_range=2 output_offset=3.5 
 
 C2 S1_P S1_N 100n IC=0  BRANCH={IF(ANALYSIS=2,1,0)}
 A$CLK CLK_pin_1 CLK$TP_DPULSE : Period=3.2u width=1.6u delay=0 

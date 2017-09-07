@@ -1,15 +1,15 @@
-**************************************************************************************************************************************
-***                                                                                                                                ***
-*** SIMetrix/SIMPLIS Intro Version 5.60a (x86) - 07.09.17 01:14:39                                                                 ***
-*** Platform: Windows NT version 6.2                                                                                               ***
-*** Architecture: x64                                                                                                              ***
-*** Serial Number:                                                                                                                 ***
-*** User:                                                                                                                          ***
-***                                                                                                                                ***
-*** TITLE:   * \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\5.60\RC4558\zuyev_1.4_RC4558 - voltage swing.sxsch***
-*** NETLIST: \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\5.60\RC4558\design.net                              ***
-***                                                                                                                                ***
-**************************************************************************************************************************************
+***************************************************************************************************************************************
+***                                                                                                                                 ***
+*** SIMetrix/SIMPLIS Intro Version 5.60a (x86) - 07.09.17 19:45:35                                                                  ***
+*** Platform: Windows NT version 6.2                                                                                                ***
+*** Architecture: x64                                                                                                               ***
+*** Serial Number:                                                                                                                  ***
+*** User:                                                                                                                           ***
+***                                                                                                                                 ***
+*** TITLE:   * \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\5.60\RC4558\zuyev_1.4_RC4558 - dual slope adc.sxsch***
+*** NETLIST: \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\5.60\RC4558\design.net                               ***
+***                                                                                                                                 ***
+***************************************************************************************************************************************
 
 ********************************************************************************
 ***                                                                          ***
@@ -17,21 +17,61 @@
 ***                                                                          ***
 ********************************************************************************
 
-X1 Vbias R7_P Vdd Vss X1_out RC4558 pinnames: inp inn vsp vsn out
-V1 Vdd 0 15
-V2 Vss 0 -15
-V3 Vin 0 PULSE -1 1 0 100u 100u 0 200u
-V4 Vbias 0 0
-R7 R7_P Vin 1K
-R8 X1_out R7_P 20k
-RL X1_out 0 250
-.GRAPH RL#P axisType="auto" persistence=-1 curveLabel="I(RL)" analysis="tran|ac|dc" xLog="auto" yLog="lin"  nowarn=true disabled=false 
-.GRAPH Vin axisType="grid" axisName="Linear output range" persistence=-1 curveLabel="Vin" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
-.GRAPH X1_out axisType="grid" axisName="Linear output range" persistence=-1 curveLabel="VOut" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
-.GRAPH Vdd axisType="grid" axisName="Linear output range" persistence=-1 curveLabel="Vdd" analysis="tran|ac|dc" order="##" xLog="auto" yLog="auto"  nowarn=true disabled=false 
-.GRAPH Vss axisType="grid" axisName="Linear output range" persistence=-1 curveLabel="Vss" analysis="tran|ac|dc" order="##" xLog="auto" yLog="auto"  nowarn=true disabled=false 
-.TRAN 1m SWEEP DEVICE=RL LIST  100G 10k 2k
-.TEMP 25
+.GRAPH CLK_pin_1 axisType="digital" persistence=-1 curveLabel="CLK" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+X1 Vbias S1_P Vdd Vss cmp-out RC4558 pinnames: inp inn vsp vsn out
+.GRAPH Vin curveLabel= Vin nowarn=true ylog=auto xlog=auto analysis=tran|ac|dc disabled=false 
+V1 Vin 0 PULSE 0 4 0 50m 50m 0 100m
+X2 Vbias S1_N Vdd Vss S1_P RC4558 pinnames: inp inn vsp vsn out
+X3 Vbias R3_P Vdd Vss X3_out RC4558 pinnames: inp inn vsp vsn out
+R1 S1_N X3_out 10k
+R2 X3_out R3_P 200
+R3 R3_P S2_P 200
+V6 Vdd 0 15
+R4 R4_P Vin 600
+V7 Vss 0 -15
+V8 Vref 0 -1
+V9 Vbias 0 0
+X$ARB1 Vin dac-out ARB1_OUT $$arbsourceARB1 pinnames: vin dac-out OUT 
+.subckt $$arbsourceARB1 vin dac-out OUT 
+B$OUT OUT 0 V=V(Vin)-V(dac-out) 
+.ends
+A$U10 DEINT S2_CP HC04D
+A$U1 [CLK_pin_1] [BUS1#0 BUS1#1 BUS1#2 BUS1#3 BUS1#4 BUS1#5 BUS1#6 BUS1#7 DEINT RST] $$CounterU1 
+.model $$CounterU1 d_logic_block file=$$counterU1 user=[10n]
+.file $$counterU1 
+A$U2 [BUS1#0 BUS1#1 BUS1#2 BUS1#3 BUS1#4 BUS1#5 BUS1#6 BUS1#7 cmp-out] [BUS2#0 BUS2#1 BUS2#2 BUS2#3 BUS2#4 BUS2#5 BUS2#6 BUS2#7] $$RegisterU2 
+.model $$RegisterU2 d_logic_block file=$$registerU2 user=[5n,20n] 
+.file $$registerU2 
+X$S1 S1_P S1_N RST 0 gen_switch : RON=1  ROFF=1Meg VON=3  VOFF=2  pinnames: P N CP CN
+X$S2 S2_P R4_P S2_CP 0 gen_switch : RON=1  ROFF=1Meg VON=3  VOFF=2  pinnames: P N CP CN
+X$S3 S2_P Vref DEINT 0 gen_switch : RON=1  ROFF=1Meg VON=3  VOFF=2  pinnames: P N CP CN
+A$U7 [BUS2#0 BUS2#1 BUS2#2 BUS2#3 BUS2#4 BUS2#5 BUS2#6 BUS2#7] dac-out $$DACU7 
+.model $$DACU7 DA_Converter 
++ output_slew_time=1e-007 
++ output_range=4 output_offset=2 
+C2 S1_P S1_N 100n IC=0  BRANCH={IF(ANALYSIS=2,1,0)}
+A$CLK CLK_pin_1 CLK$TP_DPULSE : Period=3.2u width=1.6u delay=0 
+.model CLK$TP_DPULSE d_pulse period=1u min_sink=-0.02 max_source=0.02
+.GRAPH dac-out axisType="auto" persistence=-1 curveLabel="dac-out" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH cmp-out axisType="digital" persistence=-1 curveLabel="cmp-out" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH S1_P axisType="auto" persistence=-1 curveLabel="int-out" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH ARB1_OUT axisType="grid" persistence=-1 curveLabel="Error" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH "ComposeDigital('BUS1', [-1, -1],  ''  , '%BUSNAME%#%WIRENUM%'  , [0.8, 0.9] )*1.0+0" complete=true  axistype=digital   bus=dec curveLabel="cnt-out" disabled=false 
+.KEEP ^BUS1#*
+.GRAPH RST axisType="digital" persistence=-1 curveLabel="RST" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH DEINT axisType="digital" persistence=-1 curveLabel="DEINT" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH "ComposeDigital('BUS2', [-1, -1],  ''  , '%BUSNAME%#%WIRENUM%'  , [0.8, 0.9] )*1.0+0" complete=true  axistype=digital   bus=dec curveLabel="adc-out" disabled=false 
+.KEEP ^BUS2#*
+.TRAN 100m
+.OPTIONS minTimeStep=1f
++  conv=2
++  abstol=1n
+*** Warning *** Unrecognised option 'conv'
+
+.subckt gen_switch 1 2 3 4
+S1 1 2 3 4 SW
+.model SW VSWITCH RON={ron} ROFF={roff} VON={von} VOFF={voff}
+.ends
 .SUBCKT RC4558   1 2 3 4 5
 *
 C1   11 12 2.664E-12
@@ -79,12 +119,79 @@ VLN   0 92 DC 25
 *                | | | NEGATIVE POWER SUPPLY
 *                | | | | OUTPUT
 *                | | | | |
+.model HC04D d_inverter
++ rise_delay = 5.5n
++ fall_delay = 5.5n
++ out_res = 40
++ input_load = 4.5p
++ family = "HC"
+a$BRIDGE_294 DEINT#_out DEINT UNIV_dac
+a$BRIDGE_295 DEINT DEINT#_in HC_adc
+a$BRIDGE_296 cmp-out cmp-out#_in UNIV_adc
+a$BRIDGE_297 RST#_out RST UNIV_dac
+a$BRIDGE_298 S2_CP#_out S2_CP HC_dac
+
+.model UNIV_dac dac_bridge 
++ out_high=5        ; Logic high voltage
++ input_load=-31p   ; Compensates for added rise and fall time
++ t_rise=2n         ; Output rise time
++ t_fall=2n         ; Output fall time
++ g_pullup=0.024    ; 1/(logic high output resistance)
++ g_pulldown=0.034  ; 1/(logic low output resistance)
++ g_hiz=1e-9        ; 1/(high impedance output res)
++ knee_low = 2.0    ; voltage at resistive/constant current knee logic low
++ knee_high =2.75   ; voltage at resistive/constant current knee logic high
++ v_smooth = 0.5    ; Knee smoothing band
++ in_family="UNIV"
+** Analog-Digital
+.model HC_adc adc_bridge 
++ in_low=2.1 
++ in_high=2.2 
++ rise_delay=1e-12 
++ fall_delay=1e-12
++ out_family = "HC"
++ out_low = 0
++ out_high = 5
++ clamp_bias=0.5
++ clamp_res=10
+** Added 13.5.03 to make buffer devices accept analoginput connections
+.model UNIV_adc adc_bridge 
++ in_low=2.1 
++ in_high=2.2 
++ rise_delay=1e-12 
++ fall_delay=1e-12
++ out_family = "UNIV"
++ out_low = 0
++ out_high = 5
++ clamp_bias=0.5
++ clamp_res=10
+********************************************************
+**                                                     *
+**               4000 series CMOS 15Volt               *
+**                                                     *
+********************************************************
+.model HC_dac dac_bridge 
++ out_high=5        ; Logic high voltage
++ input_load=-31p   ; Compensates for added rise and fall time
++ t_rise=2n         ; Output rise time
++ t_fall=2n         ; Output fall time
++ g_pullup=0.024    ; 1/(logic high output resistance)
++ g_pulldown=0.034  ; 1/(logic low output resistance)
++ g_hiz=1e-9        ; 1/(high impedance output res)
++ knee_low = 2.0    ; voltage at resistive/constant current knee logic low
++ knee_high =2.75   ; voltage at resistive/constant current knee logic high
++ v_smooth = 0.5    ; Knee smoothing band
++ in_family="HC"
+** Analog-Digital
+design.net (65): .OPTIONS minTimeStep=1f ...
+*** Warning *** Unrecognised option 'conv'
+
 
 ********************************************************************************
 ***                                                                          ***
-*** Starting Transient analysis at 01:14:39                                  ***
+*** Starting Transient analysis at 19:45:35                                  ***
 ***                                                                          ***
-*** Analysis card: .TRAN 1m SWEEP DEVICE=RL LIST  100G 10k 2k                ***
+*** Analysis card: .TRAN 100m                                                ***
 ***                                                                          ***
 ********************************************************************************
 
@@ -95,37 +202,106 @@ VLN   0 92 DC 25
 ********************************************************************************
 Model parameters for devices of type BJT
 ========================================
-Model:       X1.QX        
+Model:       X1.QX        X2.QX        X3.QX        
 
-bf           121.4        
-is           800a         
+bf           121.4        121.4        121.4        
+is           800a         800a         800a         
 
 
 Model parameters for devices of type Diode
 ==========================================
-Model:       X1.DX        
+Model:       X1.DX        X2.DX        X3.DX        
 
-is           800a         
+is           800a         800a         800a         
 
 
-Instance parameters for devices of type Resistor
-================================================
-Instance:    RL           
-Using model: $Resistor    
+Instance parameters for devices of type Capacitor
+=================================================
+Instance:    C2           
+Using model: $Capacitor   
 
-resistance   250          
+branch       1            
+
+
+Model parameters for devices of type Switch
+===========================================
+Model:       S1.SW        S2.SW        S3.SW        
+
+roff         1Meg         1Meg         1Meg         
+ron          1            1            1            
+voff         2            2            2            
+von          3            3            3            
+
+
+Model parameters for devices of type d_pulse
+============================================
+Model:       CLK$TP_DPULS 
+             E            
+
+max_source   20m          
+min_sink     -20m         
+period       1u           
+
+
+Model parameters for devices of type d_inverter
+===============================================
+Model:       HC04D        
+
+fall_delay   5.5n         
+input_load   4.5p         
+out_res      40           
+rise_delay   5.5n         
+
+
+Model parameters for devices of type adc_bridge
+===============================================
+Model:       HC_adc       UNIV_adc     
+
+clamp_bias   500m         500m         
+clamp_res    10           10           
+fall_delay   1p           1p           
+in_high      2.2          2.2          
+in_low       2.1          2.1          
+out_high     5            5            
+out_low      0            0            
+rise_delay   1p           1p           
+
+
+Model parameters for devices of type da_converter
+=================================================
+Model:       $$DACU7      
+
+output_offse 2            
+output_range 4            
+output_slew_ 100n         
+
+
+Model parameters for devices of type dac_bridge
+===============================================
+Model:       HC_dac       UNIV_dac     
+
+g_hiz        1n           1n           
+g_pulldown   34m          34m          
+g_pullup     24m          24m          
+input_load   -31p         -31p         
+knee_high    2.75         2.75         
+knee_low     2            2            
+out_high     5            5            
+t_fall       2n           2n           
+t_rise       2n           2n           
+v_smooth     500m         500m         
 
 
 Analysis statistics
 ===================
 
 Nominal temperature = 27
-Operating temperature = 25
-Total iterations = 2599
-Transient iterations = 2579
-Transient timepoints = 753
-Accepted timepoints = 668
-Total analysis time = 1.078
+Operating temperature = 27
+Total iterations = 43556
+Transient iterations = 43543
+Transient timepoints = 16309
+Accepted timepoints = 14536
+Total analysis time = 2.75
 Transient time = 0
 Matrix reordering time = 0
 L-U decomposition time = 0
@@ -134,22 +310,26 @@ Load time = 0
 Transient L-U decomp time = 0
 Transient solve time = 0
 Circuit build time = 0.016
-Simulator initialise time = 6.15046e-011
+Simulator initialise time = 2.04636e-011
 Data write time = 0
-JI2 Iterations = 20
+JI2 Iterations = 13
 Diag. GMIN stepping iterations = 0
 Junc. GMIN stepping iterations = 0
 Source stepping iterations = 0
 PTA iterations = 0
-Number of matrix fill ins = 37
-Number of initial matrix elements = 114
-Circuit equations = 34
-State vector size = 61
+Number of matrix fill ins = 228
+Number of initial matrix elements = 340
+Circuit equations = 95
+State vector size = 233
 Number of write buffer faults = 0
+EVT outputs = 22
+EVT ports = 44
+EVT instances = 10
+EVT nodes = 22
 
 Run statistics
 ==============
 
-Netlist read in time = -1.09935e-010
-Total run time = 1.172 seconds
-Analysis concluded 07.09.17 01:14:40
+Netlist read in time = 0.016
+Total run time = 2.829 seconds
+Analysis concluded 07.09.17 19:45:37
