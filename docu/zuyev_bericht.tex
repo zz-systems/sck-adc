@@ -92,7 +92,7 @@
 	\clearpage
 	
 	\begin{abstract}		
-		
+	In diesem Dokument werden Modelle realer Operationsverstärker wie LT1800 und RC4558 untersucht und im Kontext der integrierenden Analog/Digital-Wandlung mit idealisierten Verstärkern verglichen.
 	\end{abstract}
 	
 	\section{Einführung}	
@@ -228,9 +228,11 @@
 		die Anzahl der Analogknoten ist in der frei erhältlichen SIMetrix\texttrademark Version limitiert. Nachweislich überschreitet der Einsatz zweier und mehr Operationsverstärker des Typs LT1800  die Simulationsbeschränkungen, wie der Datei \enquote{zuyev\_1.4\_LT1800 - dual slope adc.sxsch} zu entnehmen ist. Darum wird im Nachfolgendem der OPAMP RC4558 von Texas Instruments untersucht. Die Analyse des LT1800-Modells ist im \cref{sec:appendix_LT1800_analysis} zu finden.		
 	
 		Der RC4558 ist ein universeller Verstärker ohne Rail-To-Rail-Verhalten und wird für den Einsatz als Spannungsfolger empfohlen. 
-		Die Versorgungsspannung darf maximal $ \pm\SI{18}{\volt} $ betragen, empfohlen werden $ \pm5-\SI{15}{\volt}$. Somit ist dieser nicht für den unipolaren Betrieb geeignet.
+		Die Versorgungsspannung darf maximal $ \pm\SI{18}{\volt} $ betragen, empfohlen werden $ \pm5-\pm\SI{15}{\volt}$. Somit ist dieser nicht für den unipolaren Betrieb geeignet.
 		
-		Bei der Simulation ergibt sich teilweise eine gute Übereinstimmung des Modells mit den Kenndaten \cite{datasheet:RC4558}, teilweise aber auch eine ernstzunehmende Abweichungen, die bei der weiteren Entwicklung berücksichtigt werden müssen. Besondere Aufmerksamkeit im Vergleich zum LT1800 verdienen die vergleichsweise niedrigen Slew-Rate und Gain-Bandbreite. Die Gegenüberstellung der Simulationsergebnisse und der typischen Werte aus dem Datenblatt \cite{datasheet:RC4558} lässt sich aus \cref{tab:opamp-RC4558} entnehmen. 
+		Bei der Simulation ergibt sich eine gute Übereinstimmung des Modells mit den Kenndaten \cite{datasheet:RC4558}. Besondere Aufmerksamkeit im Vergleich zum LT1800 verdienen die vergleichsweise niedrigen Slew-Rate und Gain-Bandbreite: Nach 3MHz ist der Unity-Gain-Pol erreicht, und aufgrund der niedrigen Slew-Rate kann bei hohen Frequenzen nicht die volle Ausgangsspannung erreicht werden. Diese Daten entsprechen der grundsätzlichen Empfehlung zur Verwendung als Spannungsfolger. 
+		
+		Die Gegenüberstellung der Simulationsergebnisse und der typischen Werte aus dem Datenblatt \cite{datasheet:RC4558} lässt sich aus \cref{tab:opamp-RC4558} entnehmen. 
 	
 		\begin{table}[h!]
 			\centering
@@ -257,12 +259,14 @@
 	
 		\subsection{Entwurf der integrierenden A/D-Wandler mit Modellen realer Komponenten}		
 		
-		Wie im \cref{sec:opamp_analysis} bereits erwähnt, ist der RC4558 nicht für den unipolaren Betrieb geeignet. Deswegen kann die Anforderung, alle Schaltungen unipolar zu betreiben, in diesem Fall nicht erfüllt werden. 
+		Wie im \cref{sec:opamp_analysis} bereits erwähnt, ist der RC4558 nicht für den unipolaren Betrieb geeignet. Deshalb kann die Anforderung, alle Schaltungen unipolar zu betreiben, in diesem Fall nicht erfüllt werden. 
 		
 		Die Versorgungsspannung wurde vorsichtshalber auf $\pm \SI{15}{\volt} $ erhöht, da dieser OpAmp kein Rail-To-Rail Verstärker ist und bis zu $\pm \SI{2}{\volt} $ Headroom aufweist. 
 		
-		Die Abtastrate konnte für beide Wandler-Variationen verfünffacht werden, weitere Erhöhung über den Faktor 5 hinaus führte zunächst zu einer leichten Steigerung des Quantisierungsfehlers und im Anschluss zum Versagen - aufgrund der niedrigen Slew-Rate und zu hohen Frequenz werden wie in \cref{sec:single-slope-adc} beschrieben falsche Werte ermittelt. 
+		Die Abtastrate konnte für beide Wandler-Variationen verfünffacht werden, weitere Erhöhung über den Faktor 5 hinaus führte zunächst zu einer leichten Steigerung des Quantisierungsrauschens und im Anschluss zum Versagen - aufgrund der niedrigen Slew-Rate und zu hohen Frequenz werden wie in \cref{sec:single-slope-adc} beschrieben falsche Werte ermittelt. 
 		
+		Auffällig ist der Verlauf des Quantisierungsrauschens im Vergleich zu den niedriger getakteten Pendants aus \cref{sec:single-slope-adc}: Im Falle des single-slope Wandlers, verändert sich der Verlauf sehr stark, wie in \cref{fig:single-slope-RC4558} zu sehen ist, und weist einen zum Eingangssignal proportionalen Quantisierungsfehler auf, ähnlich wie der idealisierte dual-slope Wandler.				
+				
 		\begin{figure}
 			\centering
 			\includegraphics[width=\linewidth]{RC4558_single_slope}
@@ -270,6 +274,7 @@
 			\label{fig:single-slope-RC4558}
 		\end{figure}	
 	
+		Der dual-slope Wandler hingegen weist, abgesehen vom Offset und der höheren Frequenz, ein zur idealisierten Variante nahezu unverändertes Quantisierungsrauschen auf. Dieses ist in \cref{fig:dual-slope-RC4558} dargestellt.
 	
 		\begin{figure}
 			\centering
@@ -278,6 +283,7 @@
 			\label{fig:dual-slope-RC4558}
 		\end{figure}
 	\section{Fazit}	
+		Im Aufbau mit idealisierten Komponenten verhält sich der single-slope Wandler wesentlich besser als der dual-slope Wandler: Das Quantisierungsrauschen  ist niedriger, und die Abtastrate ist doppelt so hoch. Simuliert man allerdings mit Modellen realer Komponenten, so kehrt sich die Situation um. Daraus werden die Vorteile eines dual-slope-ADC ersichtlich, nämlich die Toleranzkompensation durch einen Deintegrationsschritt.
 		
 		Der Aufbau behandelt keine Überschreitung der Eingangsspannung.  Dies hat ein undefiniertes Verhalten zur Folge. Denkbar wäre es, beim Überlauf des Zählers den Maximalwert ins Register zu übernehmen, falls der Komparator keine Überschneidung signalisiert hat. 
 		
@@ -383,7 +389,8 @@
 		\item $ GBP = A \cdot f_{3dB} = 10 \cdot f_{3dB} $
 	\end{enumerate}
 
-	\minisec{Voltage swing}
+	\minisec{Voltage swing}	
+	Datei: \emph{RC4558 - voltage swing}
 	\begin{enumerate}
 		\item Die Kurven $V_{out RL=100G}$, $V_{out RL=10k}$, $V_{out RL=2k}$ auswählen. $R_L=\SI{100}{\giga\ohm}$ simuliert den Leerlauf.
 		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Peak To Peak $\Rightarrow 2\hat{V}$
@@ -394,22 +401,22 @@
 	\label{sec:appendix_measurement_methods_LT1800}
 	Zur besseren Nachvollziehbarkeit der Ergebnisse folgt in diesem Kapitel eine Beschreibung der notwendigen Simulationsschritte. 	
 	\minisec{Slew rate}	
-	Datei: \emph{RC4558 - slew rate}
+	Datei: \emph{LT1800 - slew rate}
 	\begin{enumerate}
 		\item Die Kurve \enquote{VOut} auswählen
 		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Rise Time 10\%-90\% (auto)
-		\item $SR = \SI{500}{\milli\volt} \cdot 80\% \cdot \frac{\SI{1}{\micro\second}}{t_{rise}}$
+		\item $SR = \SI{3}{\volt} \cdot 80\% \cdot \frac{\SI{1}{\micro\second}}{t_{rise}}$
 	\end{enumerate}
 	
 	\minisec{Input bias current}
-	Datei: \emph{RC4558 - input bias current}
+	Datei: \emph{LT1800 - input bias current}
 	\begin{enumerate}
-		\item Die Kurve \enquote{I(bias)} auswählen
+		\item Die Kurven \enquote{I(bias)} auswählen
 		\item Measure $\rightarrow$ Mean
 	\end{enumerate}
 	
 	\minisec{Input offset voltage}	
-	Datei: \emph{RC4558 - voffset}
+	Datei: \emph{LT1800 - voffset}
 	
 	Hier wurde ein erweitertes Messverfahren \cite{website:amp_psrr_cmrr_circuits} verwendet.
 	\begin{enumerate}
@@ -418,7 +425,7 @@
 	\end{enumerate}
 	
 	\minisec{CMRR}	
-	Datei: \emph{RC4558 - cmrr}
+	Datei: \emph{LT1800 - cmrr}
 	
 	Hier wurde ein erweitertes Messverfahren \cite{website:amp_psrr_cmrr_circuits} verwendet.
 	\begin{enumerate}
@@ -428,7 +435,7 @@
 	\end{enumerate}
 	
 	\minisec{PSRR}	
-	Datei: \emph{RC4558 - psrr}
+	Datei: \emph{LT1800 - psrr}
 	
 	Hier wurde ein erweitertes Messverfahren \cite{website:amp_psrr_cmrr_circuits} verwendet.
 	\begin{enumerate}
@@ -438,7 +445,7 @@
 	\end{enumerate}
 	
 	\minisec{Open loop gain}	
-	Datei: \emph{RC4558 - olgain}
+	Datei: \emph{LT1800 - olgain}
 	
 	Hier wurde ein erweitertes Messverfahren \cite{website:amp_psrr_cmrr_circuits} verwendet.
 	\begin{enumerate}
@@ -448,7 +455,7 @@
 	
 	
 	\minisec{Gain bandwidth product}
-	Datei: \emph{RC4558 - unity gain bandwidth}
+	Datei: \emph{LT1800 - unity gain bandwidth}
 	\begin{enumerate}
 		\item Die Kurve $Gain$ auswählen
 		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Lowpass \SI{-3}{\decibel} (db Plot, auto) $\Rightarrow f_{3dB}$
@@ -456,10 +463,13 @@
 	\end{enumerate}
 	
 	\minisec{Voltage swing}
+	Datei: \emph{LT1800 - voltage swing}
 	\begin{enumerate}
 		\item Die Kurven $V_{out RL=100G}$, $V_{out RL=10k}$, $V_{out RL=2k}$ auswählen. $R_L=\SI{100}{\giga\ohm}$ simuliert den Leerlauf.
-		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Peak To Peak $\Rightarrow 2\hat{V}$
-		\item $V_{swing} = \pm \frac{2\hat{V}}{2}$
+		\item Measure $\rightarrow$ Minimum $\Rightarrow V_{min}$
+		\item Measure $\rightarrow$ Maximum $\Rightarrow V_{max}$
+		\item $V_{swing, lo} = \mid V_{ss} - V_{min} \mid$
+		\item $V_{swing, hi} = \mid V_{dd} - V_{max} \mid$
 	\end{enumerate}
 
 \listoffigures

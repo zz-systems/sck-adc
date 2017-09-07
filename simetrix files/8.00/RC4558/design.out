@@ -1,0 +1,189 @@
+**************************************************************************************************************************************
+***                                                                                                                                ***
+*** Elements Version 8.00p (x86) - 07.09.17 16:52                                                                                  ***
+*** Platform: Windows 10                                                                                                           ***
+*** Architecture: x64                                                                                                              ***
+*** Serial Number:                                                                                                                 ***
+*** User:                                                                                                                          ***
+***                                                                                                                                ***
+*** TITLE:   * \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\8.00\RC4558\zuyev_1.4_RC4558 - voltage swing.wxsch***
+*** NETLIST: \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\8.00\RC4558\design.net                              ***
+***                                                                                                                                ***
+**************************************************************************************************************************************
+
+********************************************************************************
+***                                                                          ***
+***                                Input Deck                                ***
+***                                                                          ***
+********************************************************************************
+
+#SIMETRIX
+X1 Vbias R7_P Vdd Vss X1_out RC4558 pinnames: inp inn vsp vsn out
+V1 Vdd 0 15
+V2 Vss 0 -15
+X$V3 Vin 0 TRI_SOURCE pinnames: P N params: _V1=-1 _V2=1 _FREQ=5k _DELAY=0 _DRATIOx100=50 _T_RISE=100u _T_FALL=100u _DAMP_COEF=0 _PWIDTH=0 _OFF_UNTIL_DELAY=0 _IDLE_IN_POP=0 _USEPHASE=0 _PHASE=0
+V4 Vbias 0 0
+R7 R7_P Vin 1K
+R8 X1_out R7_P 20k
+RL X1_out 0 250
+.GRAPH RL#P axisType="auto" persistence=-1 curveLabel="I(RL)" analysis="tran|ac|dc" xLog="auto" yLog="lin"  nowarn=true disabled=false 
+.GRAPH Vin axisType="grid" axisName="Linear output range" persistence=-1 curveLabel="Vin" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH X1_out axisType="grid" axisName="Linear output range" persistence=-1 curveLabel="VOut" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH Vdd axisType="grid" axisName="Linear output range" persistence=-1 curveLabel="Vdd" analysis="tran|ac|dc" order="##" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH Vss axisType="grid" axisName="Linear output range" persistence=-1 curveLabel="Vss" analysis="tran|ac|dc" order="##" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.TRAN 1m SWEEP DEVICE=RL LIST  100G 10k 2k
+.TEMP 25
+.SUBCKT TRI_SOURCE 1 2 params: _V1=0 _V2=1 _FREQ=100k _DRATIOx100=50 _DELAY=0 _OFF_UNTIL_DELAY=0 _IDLE_IN_POP=0 _USEPHASE=0 _PHASE=0
+V1 1 2 PWLS TRI
++ V1={_V1} 
++ V2={_V2} 
++ FREQ={_FREQ} 
++ DRATIO={_DRATIOx100/100}
++ DELAY={IFF(_USEPHASE, _PHASE/360/_FREQ, _DELAY)} 
++ OFF_UNTIL_DELAY={_OFF_UNTIL_DELAY} 
++ END
+.ENDS
+.SUBCKT RC4558   1 2 3 4 5
+*
+C1   11 12 2.664E-12
+C2    6  7 20.00E-12
+DC    5 53 DX
+DE   54  5 DX
+DLP  90 91 DX
+DLN  92 90 DX
+DP    4  3 DX
+EGND 99  0 POLY(2) (3,0) (4,0) 0 .5 .5
+FB    7 99 POLY(5) VB VC VE VLP VLN 0 6.365E6 -6E6 6E6 6E6 -6E6
+GA 6  0 11 12 418.0E-6
+GCM   0  6 10 99 6.705E-9
+IEE   3 10 DC 34.28E-6
+HLIM 90  0 VLIM 1K
+Q1   11  2 13 QX
+Q2   12  1 14 QX
+R2    6  9 100.0E3
+RC1   4 11 2.652E3
+RC2   4 12 2.652E3
+RE1  13 10 1.122E3
+RE2  14 10 1.122E3
+REE  10 99 5.834E6
+RO1 8  5 125
+RO2 7 99 125
+RP    3  4 24.67E3
+VB    9  0 DC 0
+VC    3 53 DC 2.600
+VE   54  4 DC 2.600
+VLIM  7  8 DC 0
+VLP  91  0 DC 25
+VLN   0 92 DC 25
+.MODEL DX D(IS=800.0E-18)
+.MODEL QX PNP(IS=800.0E-18 BF=121.4)
+.ENDS
+*
+* File: RC4559.301
+*
+* RC4559 OPERATIONAL AMPLIFIER "MACROMODEL" SUBCIRCUIT
+* CREATED USING PARTS RELEASE 4.01 ON 09/14/89 AT 08:35
+* (REV N/A)      SUPPLY VOLTAGE: +/-15V
+* CONNECTIONS:   NON-INVERTING INPUT
+*                | INVERTING INPUT
+*                | | POSITIVE POWER SUPPLY
+*                | | | NEGATIVE POWER SUPPLY
+*                | | | | OUTPUT
+*                | | | | |
+
+********************************************************************************
+***                                                                          ***
+*** Starting Transient analysis at 16:52                                     ***
+***                                                                          ***
+*** Analysis card: .TRAN 1m SWEEP DEVICE=RL LIST  100G 10k 2k                ***
+***                                                                          ***
+********************************************************************************
+********************************************************************************
+***                                                                          ***
+***                            Simulation Options                            ***
+***                                                                          ***
+********************************************************************************
+RELTOL                    0.001
+ABSTOL                    1e-012
+VNTOL                     1e-006
+POINTTOL                  0.001
+TEMPERATURE               25C
+GMIN                      1e-012
+Matrix Solver             UF KLU Version 1.1
+
+
+
+********************************************************************************
+***                                                                          ***
+***                             Device parameters                            ***
+***                                                                          ***
+********************************************************************************
+Model parameters for devices of type BJT
+========================================
+Model:       X1.QX        
+
+_is          800a         
+bf           121.4        
+
+
+Model parameters for devices of type Diode
+==========================================
+Model:       X1.DX        
+
+is           800a         
+
+
+Instance parameters for devices of type Resistor
+================================================
+Instance:    RL           
+Using model: $Resistor    
+
+resistance   250          
+
+
+Instance parameters for devices of type Vsource
+===============================================
+Instance:    V3.V1        
+Using model: $Vsource     
+
+
+
+Analysis statistics
+===================
+
+Nominal temperature = 27
+Operating temperature = 25
+Total iterations = 2484
+Transient iterations = 2464
+Transient timepoints = 640
+Accepted timepoints = 552
+Total analysis time = 0.063
+Transient time = 0
+Matrix reordering time = 0
+L-U decomposition time = 0
+Matrix solve time = 0
+Load time = 0
+Transient L-U decomp time = 0
+Transient solve time = 0
+Circuit build time = 0
+Simulator initialise time = 0
+Data write time = 0
+Convergence test time = 0
+LTE time = 0
+JI2 Iterations = 20
+Diag. GMIN stepping iterations = 0
+Junc. GMIN stepping iterations = 0
+Source stepping iterations = 0
+PTA iterations = 0
+Number of matrix fill ins = -23
+Number of initial matrix elements = 114
+Circuit equations = 34
+State vector size = 128
+Number of write buffer faults = 0
+
+Run statistics
+==============
+
+Netlist read in time = 0.063
+Total run time = 0.61 seconds
+Analysis concluded 07.09.17 16:52

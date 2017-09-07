@@ -554,15 +554,15 @@ Netnames
 --EndSXVERSION1.5
 .TextAnnotation
 Attributes orient=N0 x=240 y=480  
-TextInfo text="To evaluate the voltage swing:\n\n1) Run simulation\n2) Select all Vout curves (Sweep analysis at 3 different load resistor levels)\n3) Measure -> Minimum\n4) Measure -> Maximum" font="arial" size="9" italics="false" bold="false" 
+TextInfo text="To evaluate the voltage swing:\n\n1) Run simulation\n2) Select all Vout curves (Sweep analysis at 3 different load resistor levels)\n3) Measure -> More Functions... -> Peak to Peak" font="arial" size="9" italics="false" bold="false" 
 Property name="StyleNormal" value="DefaultAnnotation" autopos=1 normal=Left rotated=Left visible=0 font=Default order=-1
 Property name="StyleSelected" value="DefaultSelected" autopos=1 normal=Left rotated=Left visible=0 font=Default order=-1
 Property name="TextAlignment" value="AlignLeft" autopos=1 normal=Left rotated=Left visible=0 font=Default order=-1
 .EndTextAnnotation
 --SXVERSION1.5
 .Instance
-Attributes type=symbol name="Free_text" selected=0 protected=0 x=240 y=480 orient=N0
-Property name="value" value="To evaluate the voltage swing:\n\n1) Run simulation\n2) Select all Vout curves (Sweep analysis at 3 different load resistor levels)\n3) Measure -> Minimum\n4) Measure -> Maximum" autopos=0 x=0 y=156 align=LeftBase linear=1 selectable=1 font=FreeText
+Attributes type=symbol name="Free_text" selected=1 protected=0 x=240 y=480 orient=N0
+Property name="value" value="To evaluate the voltage swing:\n\n1) Run simulation\n2) Select all Vout curves (Sweep analysis at 3 different load resistor levels)\n3) Measure -> More Functions... -> Peak to Peak" autopos=0 x=0 y=156 align=LeftBase linear=1 selectable=1 font=FreeText
 Netnames
 .EndInstance
 --EndSXVERSION1.5
@@ -571,6 +571,6 @@ LicenseInfo version="8.00p" feats=Basic|AD|Micron|Mcore2|Schematic|Advanced|Sim|
 SimulatorMode value="SIMetrix"
 View x=0 y=0 zoomlevel=31 zoom=8 snapgrid=120 offsetX=0 offsetY=0
 Property name="CurrentMeasureItem" value="Minimum|0|0|0|" type=value
-Property name="UserVersion" value="6" type=value
+Property name="UserVersion" value="9" type=value
 .EndSchematic
 .EndComponent

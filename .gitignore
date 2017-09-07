@@ -1,3 +1,16 @@
+# OSX
 *.DS_Store
-*.wxsch.lck
+
+# Windows
 Thumbs.db
+
+# SIMetrix
+*.wxsch.lck
+*.sxsch.lck
+
+# latex
+*.lot
+*.log
+*.lof
+*.synctex.gz
+*.aux
