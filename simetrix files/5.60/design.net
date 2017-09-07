@@ -1,18 +1,58 @@
-* \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\5.60\zuyev_1.1_ideal integrator.sxsch
+* \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\5.60\zuyev_1.2_single slope adc - ideal opamp.sxsch
 *#SIMETRIX
-X1 Vbias S1_N Vdd Vss S1_P PARAM_OPAMP params: VOS=0 IB=0 IBOS=0 A0=1G GBW=1G SR_POS=1G SR_NEG=1G CMRR=1G PSRR=1G RIN=1G ROUT=100 IQ=1m VDIFF_POS=0 VDIFF_NEG=0 VOFF_TOL=0 pinnames: inp inn vsp vsn out
+X1 Vbias S1_N Vdd Vss S1_P PARAM_OPAMP params: VOS=0 IB=100n IBOS=1n A0=100k GBW=1Meg SR_POS=1Meg SR_NEG=1Meg CMRR=100k PSRR=100k RIN=1Meg ROUT=100 IQ=1m VDIFF_POS=0 VDIFF_NEG=0 VOFF_TOL=0 pinnames: inp inn vsp vsn out
 V1 Vdd 0 10
-V2 Vbias 0 5
-R1 S1_N Vin 10k
-V3 Vin 0 4
-V4 Vss 0 0
-A$U1 U1_pin_1 U1$TP_DPULSE : Period=1.001m width=1u delay=1m 
-.model U1$TP_DPULSE d_pulse period=1u min_sink=-0.02 max_source=0.02
-X$S1 S1_P S1_N U1_pin_1 0 gen_switch : RON=1  ROFF=1Meg VON=3  VOFF=2  pinnames: P N CP CN
+X2 S1_P Vin Vdd Vss cmp-out PARAM_OPAMP params: VOS=0 IB=100n IBOS=1n A0=100k GBW=1Meg SR_POS=1Meg SR_NEG=1Meg CMRR=100k PSRR=100k RIN=1Meg ROUT=100 IQ=1m VDIFF_POS=0 VDIFF_NEG=0 VOFF_TOL=0 pinnames: inp inn vsp vsn out
+V2 Vss 0 0
+R1 S1_N Vref 10k
+V3 Vbias 0 5
+V4 Vref 0 4
+V5 Vin 0 PULSE 5 9 0 50m 50m 0 100m
+X$ARB1 Vin dac-out ARB1_OUT $$arbsourceARB1 pinnames: vin dac-out OUT 
+.subckt $$arbsourceARB1 vin dac-out OUT 
+B$OUT OUT 0 V=V(Vin)-V(dac-out) 
+.ends
+A$U1 [CLK_pin_1] [BUS1#0 BUS1#1 BUS1#2 BUS1#3 BUS1#4 BUS1#5 BUS1#6 BUS1#7 RST] $$CounterU1 
+.model $$CounterU1 d_logic_block file=$$counterU1 user=[10n]
+.file $$counterU1 
+PORT (DELAY=1e-12) output out[0:31] ; 
+EDGE (CLOCK=in[0], DELAY=USER[0]) count ; 
+count = count>=256? 0 : count+1 ; 
+output=count ; 
+.endf 
+
+X$S1 S1_P S1_N RST 0 gen_switch : RON=1  ROFF=1Meg VON=3  VOFF=2  pinnames: P N CP CN
+A$U2 [BUS1#0 BUS1#1 BUS1#2 BUS1#3 BUS1#4 BUS1#5 BUS1#6 BUS1#7 cmp-out] [BUS2#0 BUS2#1 BUS2#2 BUS2#3 BUS2#4 BUS2#5 BUS2#6 BUS2#7] $$RegisterU2 
+.model $$RegisterU2 d_logic_block file=$$registerU2 user=[1n,20n] 
+.file $$registerU2 
+PORT datain in[0:7] ; 
+PORT (DELAY=1e-12) dataout out[0:7] ; 
+COMB (WIDTH=8, DELAY=USER[0]) datain_del ; 
+EDGE (WIDTH=8, DELAY=USER[1], HOLD=USER[0], CLOCK=in[8]) Register ; 
+datain_del = datain ; 
+register = datain_del ; 
+dataout = register ; 
+.endf 
+
+A$U7 [BUS2#0 BUS2#1 BUS2#2 BUS2#3 BUS2#4 BUS2#5 BUS2#6 BUS2#7] dac-out $$DACU7 
+.model $$DACU7 DA_Converter 
++ output_slew_time=1e-007 
++ output_range=4 output_offset=7 
+
 C2 S1_P S1_N 100n IC=0  BRANCH={IF(ANALYSIS=2,1,0)}
+A$CLK CLK_pin_1 CLK$TP_DPULSE : Period=16u width=8u delay=0 
+.model CLK$TP_DPULSE d_pulse period=1u min_sink=-0.02 max_source=0.02
+.GRAPH dac-out axisType="auto" persistence=-1 curveLabel="dac-out" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH cmp-out axisType="digital" persistence=-1 curveLabel="cmp-out" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH Vin curveLabel= Vin nowarn=true ylog=auto xlog=auto analysis=tran|ac|dc disabled=false 
 .GRAPH S1_P axisType="auto" persistence=-1 curveLabel="int-out" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
-.TRAN 2m
-.OPTIONS conv=2
-+  cshuntsub
-9.SIMULATOR SIMETRIX
+.GRAPH ARB1_OUT axisType="grid" persistence=-1 curveLabel="Error" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH CLK_pin_1 axisType="digital" persistence=-1 curveLabel="CLK" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH RST axisType="digital" persistence=-1 curveLabel="RST" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH "ComposeDigital('BUS1', [-1, -1],  ''  , '%BUSNAME%#%WIRENUM%'  , [0.8, 0.9] )*1.0+0" complete=true  axistype=digital   bus=dec curveLabel="cnt-out" disabled=false 
+.KEEP ^BUS1#*
+.GRAPH "ComposeDigital('BUS2', [-1, -1],  ''  , '%BUSNAME%#%WIRENUM%'  , [0.8, 0.9] )*1.0+0" complete=true  axistype=digital   bus=dec curveLabel="adc-out" disabled=false 
+.KEEP ^BUS2#*
+.TRAN 100m
+.TEMP 25
 

@@ -1,37 +1,45 @@
-* \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\8.00\RC4558\zuyev_1.4_RC4558 - dual slope adc.wxsch
+* \\vmware-host\Shared Folders\Documents\DEV\sck-adc\simetrix files\8.00\RC4558\zuyev_1.4_RC4558 - single slope adc.wxsch
 *#SIMETRIX
-.GRAPH CLK_pin_1 axisType="digital" persistence=-1 curveLabel="CLK" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH cmp-out axisType="digital" persistence=-1 curveLabel="cmp-out" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+.GRAPH RST axisType="digital" persistence=-1 curveLabel="RST" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+X1 S2_P Vin Vdd Vss cmp-out RC4558 pinnames: inp inn vsp vsn out
+.GRAPH dac-out axisType="auto" persistence=-1 curveLabel="dac-out" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+X2 Vbias S2_N Vdd Vss S2_P RC4558 pinnames: inp inn vsp vsn out
+.GRAPH ARB2_OUT axisType="grid" persistence=-1 curveLabel="Error" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
 .GRAPH Vin curveLabel= Vin nowarn=true ylog=auto xlog=auto analysis=tran|ac|dc disabled=false 
-X1 Vbias S1_P Vdd Vss cmp-out RC4558 pinnames: inp inn vsp vsn out
-X2 Vbias S1_N Vdd Vss S1_P RC4558 pinnames: inp inn vsp vsn out
-X3 Vbias R3_P Vdd Vss X3_out RC4558 pinnames: inp inn vsp vsn out
-R1 S1_N X3_out 10k
-R2 X3_out R3_P 200
-R3 R3_P S2_P 200
-R4 R4_P Vin 600
-V6 Vdd 0 15
-V7 Vss 0 -15
-V8 Vref 0 -1
-V9 Vbias 0 0
-X$ARB1 Vin dac-out ARB1_OUT $$arbsourceARB1 pinnames: vin dac-out OUT 
-.subckt $$arbsourceARB1 vin dac-out OUT 
+.GRAPH S2_P axisType="auto" persistence=-1 curveLabel="int-out" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+R2 S2_N Vref 1k
+.GRAPH "ComposeDigital('BUS2', [-1, -1],  ''  , '%BUSNAME%#%WIRENUM%'  , [0.8, 0.9] )*1.0+0" complete=true  axistype=digital   bus=dec curveLabel="adc-out" disabled=false 
+.KEEP ^BUS2#*
+V6 Vss 0 -15
+X$V7 Vin 0 TRI_SOURCE pinnames: P N params: _V1=0 _V2=4 _FREQ=10 _DELAY=0 _DRATIOx100=50 _T_RISE=50m _T_FALL=50m _DAMP_COEF=0 _PWIDTH=0 _OFF_UNTIL_DELAY=0 _IDLE_IN_POP=0 _USEPHASE=0 _PHASE=0
+V8 Vbias 0 0
+V9 Vref 0 -1
+A$CLK1 CLK1_pin_1 CLK1$TP_DPULSE : Period=1.6u width=800n delay=0 
+.model CLK1$TP_DPULSE d_pulse period=1u min_sink=-0.02 max_source=0.02
+X$ARB2 Vin dac-out ARB2_OUT $$arbsourceARB2 pinnames: vin dac-out OUT 
+.subckt $$arbsourceARB2 vin dac-out OUT 
 B$OUT OUT 0 V=V(Vin)-V(dac-out) 
 .ends
-A$U10 DEINT S2_CP HC04D
-X$V10 Vin 0 TRI_SOURCE pinnames: P N params: _V1=0 _V2=4 _FREQ=10 _DELAY=0 _DRATIOx100=50 _T_RISE=50m _T_FALL=50m _DAMP_COEF=0 _PWIDTH=0 _OFF_UNTIL_DELAY=0 _IDLE_IN_POP=0 _USEPHASE=0 _PHASE=0
-A$U1 [CLK_pin_1] [BUS1#0 BUS1#1 BUS1#2 BUS1#3 BUS1#4 BUS1#5 BUS1#6 BUS1#7 DEINT RST] $$CounterU1 
-.model $$CounterU1 d_logic_block file=$$counterU1 user=[10n]
-.file $$counterU1 
+V10 Vdd 0 15
+X$S2 S2_P S2_N RST 0 gen_switch : RON=1  ROFF=1Meg VON=3  VOFF=2  pinnames: P N CP CN
+A$U4 [CLK1_pin_1] [BUS1#0 BUS1#1 BUS1#2 BUS1#3 BUS1#4 BUS1#5 BUS1#6 BUS1#7 RST] $$CounterU4 
+.model $$CounterU4 d_logic_block file=$$counterU4 user=[10n]
+.file $$counterU4 
 PORT (DELAY=1e-12) output out[0:31] ; 
 EDGE (CLOCK=in[0], DELAY=USER[0]) count ; 
-count = count>=512? 0 : count+1 ; 
+count = count>=256? 0 : count+1 ; 
 output=count ; 
 .endf 
 
-X$S1 S1_P S1_N RST 0 gen_switch : RON=1  ROFF=1Meg VON=3  VOFF=2  pinnames: P N CP CN
-A$U2 [BUS1#0 BUS1#1 BUS1#2 BUS1#3 BUS1#4 BUS1#5 BUS1#6 BUS1#7 cmp-out] [BUS2#0 BUS2#1 BUS2#2 BUS2#3 BUS2#4 BUS2#5 BUS2#6 BUS2#7] $$RegisterU2 
-.model $$RegisterU2 d_logic_block file=$$registerU2 user=[5n,20n] 
-.file $$registerU2 
+A$U5 [BUS2#0 BUS2#1 BUS2#2 BUS2#3 BUS2#4 BUS2#5 BUS2#6 BUS2#7] dac-out $$DACU5 
+.model $$DACU5 DA_Converter 
++ output_slew_time=1e-007 
++ output_range=4 output_offset=2 
+
+A$U6 [BUS1#0 BUS1#1 BUS1#2 BUS1#3 BUS1#4 BUS1#5 BUS1#6 BUS1#7 cmp-out] [BUS2#0 BUS2#1 BUS2#2 BUS2#3 BUS2#4 BUS2#5 BUS2#6 BUS2#7] $$RegisterU6 
+.model $$RegisterU6 d_logic_block file=$$registerU6 user=[1n,20n] 
+.file $$registerU6 
 PORT datain in[0:7] ; 
 PORT (DELAY=1e-12) dataout out[0:7] ; 
 COMB (WIDTH=8, DELAY=USER[0]) datain_del ; 
@@ -41,26 +49,10 @@ register = datain_del ;
 dataout = register ; 
 .endf 
 
-X$S2 S2_P R4_P S2_CP 0 gen_switch : RON=1  ROFF=1Meg VON=3  VOFF=2  pinnames: P N CP CN
-X$S3 S2_P Vref DEINT 0 gen_switch : RON=1  ROFF=1Meg VON=3  VOFF=2  pinnames: P N CP CN
-A$U7 [BUS2#0 BUS2#1 BUS2#2 BUS2#3 BUS2#4 BUS2#5 BUS2#6 BUS2#7] dac-out $$DACU7 
-.model $$DACU7 DA_Converter 
-+ output_slew_time=1e-007 
-+ output_range=4 output_offset=2 
-
-C2 S1_P S1_N 100n IC=0  BRANCH={IF(ANALYSIS=2,1,0)}
-A$CLK CLK_pin_1 CLK$TP_DPULSE : Period=3.2u width=1.6u delay=0 
-.model CLK$TP_DPULSE d_pulse period=1u min_sink=-0.02 max_source=0.02
-.GRAPH dac-out axisType="auto" persistence=-1 curveLabel="dac-out" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
-.GRAPH cmp-out axisType="digital" persistence=-1 curveLabel="cmp-out" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
-.GRAPH S1_P axisType="auto" persistence=-1 curveLabel="int-out" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
-.GRAPH ARB1_OUT axisType="grid" persistence=-1 curveLabel="Error" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
+C1 S2_P S2_N 100n IC=0  BRANCH={IF(ANALYSIS=2,1,0)}
+.GRAPH CLK1_pin_1 axisType="digital" persistence=-1 curveLabel="CLK" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
 .GRAPH "ComposeDigital('BUS1', [-1, -1],  ''  , '%BUSNAME%#%WIRENUM%'  , [0.8, 0.9] )*1.0+0" complete=true  axistype=digital   bus=dec curveLabel="cnt-out" disabled=false 
 .KEEP ^BUS1#*
-.GRAPH RST axisType="digital" persistence=-1 curveLabel="RST" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
-.GRAPH DEINT axisType="digital" persistence=-1 curveLabel="DEINT" analysis="tran|ac|dc" xLog="auto" yLog="auto"  nowarn=true disabled=false 
-.GRAPH "ComposeDigital('BUS2', [-1, -1],  ''  , '%BUSNAME%#%WIRENUM%'  , [0.8, 0.9] )*1.0+0" complete=true  axistype=digital   bus=dec curveLabel="adc-out" disabled=false 
-.KEEP ^BUS2#*
 .TRAN 100m
 .OPTIONS minTimeStep=1f
 +  conv=2

@@ -155,15 +155,13 @@
 		Der Zähler ist auf einen Wertebereich von [0, 256] konfiguriert, und das 9-te Bit wird als Reset-Signal verwendet, welches die Entladung des Integrationskondensators initiiert.
 		Der Komparator detektiert die Überschneidung zwischen $V_{in}$ und $V_{ref}$, und die unteren \SI{8}{\bit} des Zählers werden bis zum nächsten Auslösen ins Register übernommen.
 		
-		Der Eingangssignalbereich wird auf \SI{4}{\volt} Amplitude bei einem \SI{5}{\volt} Offset  festgelegt, und bei einer Auflösung von \SI{8}{\bit} berechnet sich die Taktperiode wie folgt: 
+		Der Eingangssignalbereich wird auf \SI{4}{\volt} Amplitude bei einem \SI{7}{\volt} Offset  festgelegt, und bei einer Auflösung von \SI{8}{\bit} berechnet sich die Taktperiode wie folgt: 
 		
 		\begin{equation}
 		\label{eq:clock_period}
 		T = \frac{\mid V_{max} - V_{min} \mid}{2^n  \cdot \SI{1}{\volt\per\milli\second}} = \frac{\SI{4}{\volt}}{2^8 \cdot \SI{1}{\volt\per\milli\second}} = \SI{15.625}{\volt\per\micro\second}	
 		\end{equation}
-		
-		%Damit ergibt sich auch die Frequenz $ f = \frac{1}{T} = \frac{1}{\SI{15.625}{\volt\per\micro\second}} = \SI{64}{\kilo\hertz}$		
-		
+				
 		Mit der in \cref{eq:clock_period} berechneten Periodendauer ergibt sich die folgende skalierte Ansicht: 
 		
 		\begin{figure}[h!]
