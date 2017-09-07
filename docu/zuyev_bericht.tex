@@ -2,12 +2,11 @@
 \documentclass[
 	ngerman,
 	parskip=half,
-	headsepline,
 	twocolumn,
 	DIV=calc,
-	listof=leveldown,
 	]{scrartcl}
 	
+\KOMAoptions{DIV=last}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -16,43 +15,26 @@
 \usepackage{babel}
 \usepackage{lmodern}
 \usepackage{microtype}
-
-% new Functions
 \usepackage{graphicx}
-\usepackage{xcolor}
-\usepackage{tikz}
-\usetikzlibrary{arrows,automata, calc}
-\usepackage[binary-units=true]{siunitx}
-\usepackage{array}
-\usepackage{booktabs}
 \usepackage{xspace}
 \usepackage[xindy, nonumberlist, nogroupskip]{glossaries}
 \usepackage{csquotes}
 \usepackage{enumitem}
 \usepackage{float}
 \usepackage{gensymb, siunitx}
-\sisetup{per-mode=symbol}
+\sisetup{per-mode=symbol, binary-units=true}
 
 % References
 \usepackage[hyphens]{url}
 \usepackage[hidelinks,linktoc=all]{hyperref}
 \usepackage{cleveref}
-
-% Customization of Looks
-\usepackage[bf]{caption}
-\usepackage[automark]{scrlayer-scrpage}
-\usepackage{setspace}
-\onehalfspacing
-
-\usepackage{booktabs}
-\usepackage{multirow}
-
-% quotes
-\usepackage{cleveref}
-
-%\usepackage[babel, german=quotes]{csquotes}
 \usepackage[backend=biber, style=ieee]{biblatex}
 \addbibresource{bibliography.bib} 
+
+% Tables
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{multirow}
 
 % Enable shell-escape
 % !TeX TXS-program:compile = txs:///pdflatex/[--shell-escape]
@@ -76,7 +58,6 @@
 \subject{Schaltungstechnik SS2017}
 \titlehead{\includegraphics[width=\linewidth]{Logo_THM}}
 \date{\today}
-\publishers{Prof. Dr. Karsten Leitis}
 
 \graphicspath{{img/}}
 
@@ -137,22 +118,22 @@
 		Eine weitere Anforderung ist eine möglichst vollständige Idealisierung der in SIMetrix\texttrademark eingesetzten parametrisierbaren Operationsverstärker. 
 		In \cref{tab:opamp-ideal-params} ist eine Zusammenstellung der wichtigsten Parameter aufgelistet. 
 		
-		In SIMetrix\texttrademark 5.60a führt der Ausgangswiderstand $R_{out} = 0$ während der transienten Analyse zu Konvergenzproblemen und ist somit unbrauchbar. 
+		In SIMetrix\texttrademark 5.60a führt der Ausgangswiderstand $R_{out} = 0$ während der transienten Analyse zu Konvergenzproblemen oder falschen Ergebnissen und ist somit unbrauchbar. Dasselbe gilt auch für GBWP in SIMetrix\texttrademark 8.00p.
 		
 		\begin{table}
 			\centering
 			\begin{tabular}{l c r r}
 				\toprule
-				\multirow{2}{*}{Eigenschaft}
-					& \multirow{2}{*}{Ideal}
-					& \multicolumn{2}{c}{SIMetrix\texttrademark Version} \\
-					& & 8.00p & 5.60a \\
+				\multirow{2}{*}{{Eigenschaft}}
+					& \multirow{2}{*}{{Ideal}}
+					& \multicolumn{2}{c}{{SIMetrix\texttrademark Version}} \\
+					& & {8.00p} & {5.60a} \\
 				\midrule
 				CMRR & $\infty$ & $1G$ & $1G$ \\
 				PSRR & $\infty$ & $1G$ & $1G$ \\
 				Headroom & $0$ & $0V$ & $0V$\\
 				Open-loop gain & $\infty$ &  $1G$ & $1G$\\
-				GBWP & $\infty$ &  $1G$ & $1G$\\
+				GBWP & $\infty$ &  $3Meg$ & $1G$\\
 				Slewrate & $\infty$ & $1G$ & $1G$ \\
 				In. resistance & $\infty$ & $1G\Omega$ & $1G\Omega$ \\				
 				Out. resistance & $0$ & $0\Omega$ & $100\Omega$\\
@@ -188,7 +169,7 @@
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=\linewidth]{ideal_single_slope_odd_freq_comparator_slew_rate_wide}
-			\caption[Single-slope ADC (\SI{250}{\hertz})]{Single-slope ADC, $T \Rightarrow 15.625\mu s$, $V_{in} \Rightarrow [5,  9]$}
+			\caption[Single-slope ADC (T = \SI{15.625}{\micro\second})]{Single-slope ADC, $T \Rightarrow \SI{15.625}{\micro\second}$, $V_{in} \Rightarrow [5,  9]$}
 			\label{fig:single-slope-ideal-slew-rate}
 		\end{figure}	
 	
@@ -199,7 +180,7 @@
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=\linewidth]{ideal_single_slope}
-			\caption[Single-slope ADC (\SI{244.14}{\hertz})]{Single-slope ADC, $T \Rightarrow \SI{16}{\micro\second}$, $V_{in} \Rightarrow [5,  9]$}
+			\caption[Single-slope ADC (T = \SI{16}{\micro\second})]{Single-slope ADC, $T \Rightarrow \SI{16}{\micro\second}$, $V_{in} \Rightarrow [5,  9]$}
 			\label{fig:single-slope-ideal}
 		\end{figure}
 		
@@ -297,7 +278,7 @@
 	
 	\begin{table}[h!]
 		\centering
-		\begin{tabular}{l r r r}
+		\begin{tabular}{l l r r}
 			\toprule
 			\multirow{2}{*}{Eigenschaft} & \multirow{2}{*}{Bedingung} &
 			\multicolumn{2}{c}{Wert} \\
