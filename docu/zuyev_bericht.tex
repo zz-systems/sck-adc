@@ -152,7 +152,7 @@
 				PSRR & $\infty$ & $1G$ & $1G$ \\
 				Headroom & $0$ & $0V$ & $0V$\\
 				Open-loop gain & $\infty$ &  $1G$ & $1G$\\
-				GBWP & $\infty$ &  $3Meg$ & $1G$\\
+				GBWP & $\infty$ &  $1G$ & $1G$\\
 				Slewrate & $\infty$ & $1G$ & $1G$ \\
 				In. resistance & $\infty$ & $1G\Omega$ & $1G\Omega$ \\				
 				Out. resistance & $0$ & $0\Omega$ & $100\Omega$\\
@@ -263,7 +263,7 @@
 		
 		Die Versorgungsspannung wurde vorsichtshalber auf $\pm \SI{15}{\volt} $ erhöht, da dieser OpAmp kein Rail-To-Rail Verstärker ist und bis zu $\pm \SI{2}{\volt} $ Headroom aufweist. 
 		
-		Die Abtastrate konnte für beide Wandler-Variationen verfünffacht werden, weitere Erhöhung über den Faktor 5 hinaus führte zunächst zu einer leichten Steigerung des Quantisierungsrauschens und im Anschluss zum Versagen - aufgrund der niedrigen Slew-Rate und zu hohen Frequenz werden wie in \cref{sec:single-slope-adc} beschrieben falsche Werte ermittelt. 
+		Die Abtastrate konnte für beide Wandler-Variationen verfünffacht werden, weitere Erhöhung über den Faktor 5 hinaus führte zunächst zu einer Steigerung des Quantisierungsrauschens und im Anschluss zum Versagen - aufgrund der niedrigen Slew-Rate und zu hohen Frequenz werden wie in \cref{sec:single-slope-adc} beschrieben falsche Werte ermittelt. 
 		
 		Auffällig ist der Verlauf des Quantisierungsrauschens im Vergleich zu den niedriger getakteten Pendants aus \cref{sec:single-slope-adc}: Im Falle des single-slope Wandlers, verändert sich der Verlauf sehr stark, wie in \cref{fig:single-slope-RC4558} zu sehen ist, und weist einen zum Eingangssignal proportionalen Quantisierungsfehler auf, ähnlich wie der idealisierte dual-slope Wandler.				
 				
@@ -285,9 +285,9 @@
 	\section{Fazit}	
 		Im Aufbau mit idealisierten Komponenten verhält sich der single-slope Wandler wesentlich besser als der dual-slope Wandler: Das Quantisierungsrauschen  ist niedriger, und die Abtastrate ist doppelt so hoch. Simuliert man allerdings mit Modellen realer Komponenten, so kehrt sich die Situation um. Daraus werden die Vorteile eines dual-slope-ADC ersichtlich, nämlich die Toleranzkompensation durch einen Deintegrationsschritt.
 		
-		Der Aufbau behandelt keine Überschreitung der Eingangsspannung.  Dies hat ein undefiniertes Verhalten zur Folge. Denkbar wäre es, beim Überlauf des Zählers den Maximalwert ins Register zu übernehmen, falls der Komparator keine Überschneidung signalisiert hat. 
+		Der Aufbau behandelt keine Überschreitung der Eingangsspannung.  Dies hat eine Aufnahme zu niedriger Werte zur Folge. Denkbar wäre es, beim Überlauf des Zählers den Maximalwert ins Register zu übernehmen, falls der Komparator keine Überschneidung signalisiert hat. 
 		
-		Den Komparatorausgang direkt als Clock-Eingang für das Register zu verwenden kann gefährlich sein, da die zu vergleichenden Spannungen durchaus prellen können. Besser wäre es, den Komparator zum Schmitt-Trigger mit einer zur Abtastfrequenz passenden Hysterese umzuwandeln.
+		Den Komparatorausgang direkt als Clock-Eingang für das Register zu verwenden kann gefährlich sein, da die Ausgangsspannung durchaus prellen könnte (Slew-Rate Überschwinger). Mäglich wäre es, den Komparator um einen Schmitt-Trigger\cite{website:schmitt_trigger_slewrate} mit einer zur Abtastfrequenz passenden Hysterese zu erweitern bzw umzuwandeln.
 		
 	\section{Anhang}
 	

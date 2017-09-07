@@ -14,3 +14,6 @@ Thumbs.db
 *.lof
 *.synctex.gz
 *.aux
+*.bbl
+*.bcf
+*.blg

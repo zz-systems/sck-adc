@@ -567,6 +567,6 @@ LicenseInfo version="8.00p" feats=Basic|AD|Micron|Mcore2|Schematic|Advanced|Sim|
 SimulatorMode value="SIMetrix"
 View x=0 y=0 zoomlevel=31 zoom=8 snapgrid=120 offsetX=0 offsetY=0
 Property name="CurrentMeasureItem" value="Frequency|0|0|0|" type=value
-Property name="UserVersion" value="17" type=value
+Property name="UserVersion" value="18" type=value
 .EndSchematic
 .EndComponent
