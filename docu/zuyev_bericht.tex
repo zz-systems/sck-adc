@@ -159,7 +159,7 @@
 		
 		\begin{equation}
 		\label{eq:clock_period}
-		T = \frac{\mid V_{max} - V_{min} \mid}{2^n  \cdot \SI{1}{\volt\per\milli\second}} = \frac{\SI{4}{\volt}}{2^8 \cdot \SI{1}{\volt\per\milli\second}} = \SI{15.625}{\volt\per\micro\second}	
+		T = \frac{\mid V_{max} - V_{min} \mid}{2^n  \cdot \SI{1}{\volt\per\milli\second}} = \frac{\SI{4}{\volt}}{2^8 \cdot \SI{1}{\volt\per\milli\second}} = \SI{15.625}{\micro\second}	
 		\end{equation}
 				
 		Mit der in \cref{eq:clock_period} berechneten Periodendauer ergibt sich die folgende skalierte Ansicht: 
@@ -188,8 +188,8 @@
 		
 		Aufbauend auf dem single-slope Wandler aus dem vorhergehendem Kapitel wird die Steuerlogik angepasst: der Zähler wird auf \SI{10}{\bit} mit einem Wertebereich von [0, 512] erweitert. Bit 9 signalisiert nun die Deintegrationsphase, Bit 10 wird als Reset-Signal verwendet.
 				
-		Zusäzlich wurden ein Eingangsmultiplexer, um zwischen $V_{ref} $und $V_{in} $ umzuschalten, und ein Unity-Gain-Buffer verbaut.
-		Wird an diesen nun $V_{ref} $ geschaltet, so wird das SIgnal 1:1 am Integrierer anliegen. Dem $V_{in}$ Eingang ist allerdings ein \SI{3}{\kilo\ohm} Widerstand nachgeschaltet, dadurch agiert der  Spannungsfolger als Dämpfer mit einem Verstärkungsfaktor $ A = \frac{\SI{1}{\kilo\ohm}}{\SI{3}{\kilo\ohm} + \SI{1}{\kilo\ohm}} = \frac{1}{4}$ und passt den Bereich von $V_{in} $ auf $V_{ref} $ an. Somit ist eine konstante De- und Integrationsrate von \SI{1}{\volt\per\micro\second} gewährleistet.
+		Zusäzlich wurden ein Eingangsmultiplexer, um zwischen $V_{ref} $und $V_{in} $ umzuschalten, und ein invertierender Verstärker verbaut.
+		Wird an diesen nun $V_{ref} $ geschaltet, so wird das SIgnal 1:1 am Integrierer anliegen. Dem $V_{in}$ Eingang ist allerdings ein \SI{3}{\kilo\ohm} Widerstand nachgeschaltet, dadurch agiert der Verstärker als Dämpfer mit einem Verstärkungsfaktor $ A = \frac{\SI{1}{\kilo\ohm}}{\SI{3}{\kilo\ohm} + \SI{1}{\kilo\ohm}} = \frac{1}{4}$ und passt den Bereich von $V_{in} $ auf $V_{ref} $ an. Somit ist eine konstante De- und Integrationsrate von \SI{1}{\volt\per\micro\second} gewährleistet.
 		
 		Da von nun an eine Auswertung des Integrators nur noch jeden zweiten Takt erfolgt, führt das zu Halbierung der Abtastrate und somit dem Nyquist-Theorem entsprechend zur Halbierung der möglichen Eingangsfrequenz - das kann man auf \cref{fig:dual-slope-ideal} gut erkennen, trotz gleicher Taktung werden ungefähr halb so viele Samples aufgenommen. Darüber hinaus macht sich ein zum Eingangssignal proportionaler Quantisierungsfehler bemerkbar, dieser ist mit dem Quantisierungsrauschen überlagert.
 		
@@ -303,79 +303,6 @@
 		\label{tab:opamp-LT1800}
 	\end{table}
 
-	\subsection{Messverfahren RC4558}
-	\label{sec:appendix_measurement_methods_RC4558}
-	Zur besseren Nachvollziehbarkeit der Ergebnisse folgt in diesem Kapitel eine Beschreibung der notwendigen Simulationsschritte. 	
-	\minisec{Slew rate}	
-	Datei: \emph{RC4558 - slew rate}
-	\begin{enumerate}
-		\item Die Kurve \enquote{VOut} auswählen
-		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Rise Time 10\%-90\% (auto)
-		\item $SR = \SI{500}{\milli\volt} \cdot 80\% \cdot \frac{\SI{1}{\micro\second}}{t_{rise}}$
-	\end{enumerate}
-
-	\minisec{Input bias current}
-	Datei: \emph{RC4558 - input bias current}
-	\begin{enumerate}
-		\item Die Kurve \enquote{I(bias)} auswählen
-		\item Measure $\rightarrow$ Mean
-	\end{enumerate}
-
-	\minisec{Input offset voltage}	
-	Datei: \emph{RC4558 - voffset}
-	
-	Hier wurde ein erweitertes Messverfahren \cite{website:amp_psrr_cmrr_circuits} verwendet.
-	\begin{enumerate}
-		\item Die Kurve \enquote{VOffset} auswählen
-		\item Measure $\rightarrow$ Mean
-	\end{enumerate}
-
-	\minisec{CMRR}	
-	Datei: \emph{RC4558 - cmrr}
-	
-	Hier wurde ein erweitertes Messverfahren \cite{website:amp_psrr_cmrr_circuits} verwendet.
-	\begin{enumerate}
-		\item Die Kurven $V_{cm}$ und $V_{offset}$ auswählen.
-		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Peak To Peak $\Rightarrow 2\hat{V}_{cm}$
-		\item $ CMRR = 20 * log_{10} \frac{2\hat{V}_{cm}}{2\hat{V}_{offset}}$
-	\end{enumerate}
-
-	\minisec{PSRR}	
-	Datei: \emph{RC4558 - psrr}
-	
-	Hier wurde ein erweitertes Messverfahren \cite{website:amp_psrr_cmrr_circuits} verwendet.
-	\begin{enumerate}
-		\item Die Kurven $V_{dd}$ und $V_{offset}$ auswählen.
-		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Peak To Peak $\Rightarrow 2\hat{V}_{dd}$
-		\item $ PSRR = 20 * log_{10} \frac{2\hat{V}_{dd}}{2\hat{V}_{offset}}$
-	\end{enumerate}
-
-	\minisec{Open loop gain}	
-	Datei: \emph{RC4558 - olgain}
-	
-	Hier wurde ein erweitertes Messverfahren \cite{website:amp_psrr_cmrr_circuits} verwendet.
-	\begin{enumerate}
-		\item Die Kurve $Gain$ auswählen.
-		\item Measure $\rightarrow$ Maximum
-	\end{enumerate}
-	
-
-	\minisec{Gain bandwidth product}
-	Datei: \emph{RC4558 - unity gain bandwidth}
-	\begin{enumerate}
-		\item Die Kurve $Gain$ auswählen
-		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Lowpass \SI{-3}{\decibel} (db Plot, auto) $\Rightarrow f_{3dB}$
-		\item $ GBP = A \cdot f_{3dB} = 10 \cdot f_{3dB} $
-	\end{enumerate}
-
-	\minisec{Voltage swing}	
-	Datei: \emph{RC4558 - voltage swing}
-	\begin{enumerate}
-		\item Die Kurven $V_{out RL=100G}$, $V_{out RL=10k}$, $V_{out RL=2k}$ auswählen. $R_L=\SI{100}{\giga\ohm}$ simuliert den Leerlauf.
-		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Peak To Peak $\Rightarrow 2\hat{V}$
-		\item $V_{swing} = \pm \frac{2\hat{V}}{2}$
-	\end{enumerate}
-
 	\subsection{Messverfahren LT1800}
 	\label{sec:appendix_measurement_methods_LT1800}
 	Zur besseren Nachvollziehbarkeit der Ergebnisse folgt in diesem Kapitel eine Beschreibung der notwendigen Simulationsschritte. 	
@@ -449,6 +376,81 @@
 		\item Measure $\rightarrow$ Maximum $\Rightarrow V_{max}$
 		\item $V_{swing, lo} = \mid V_{ss} - V_{min} \mid$
 		\item $V_{swing, hi} = \mid V_{dd} - V_{max} \mid$
+	\end{enumerate}
+
+	
+	
+	\subsection{Messverfahren RC4558}
+	\label{sec:appendix_measurement_methods_RC4558}
+	Zur besseren Nachvollziehbarkeit der Ergebnisse folgt in diesem Kapitel eine Beschreibung der notwendigen Simulationsschritte. 	
+	\minisec{Slew rate}	
+	Datei: \emph{RC4558 - slew rate}
+	\begin{enumerate}
+		\item Die Kurve \enquote{VOut} auswählen
+		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Rise Time 10\%-90\% (auto)
+		\item $SR = \SI{500}{\milli\volt} \cdot 80\% \cdot \frac{\SI{1}{\micro\second}}{t_{rise}}$
+	\end{enumerate}
+	
+	\minisec{Input bias current}
+	Datei: \emph{RC4558 - input bias current}
+	\begin{enumerate}
+		\item Die Kurve \enquote{I(bias)} auswählen
+		\item Measure $\rightarrow$ Mean
+	\end{enumerate}
+	
+	\minisec{Input offset voltage}	
+	Datei: \emph{RC4558 - voffset}
+	
+	Hier wurde ein erweitertes Messverfahren \cite{website:amp_psrr_cmrr_circuits} verwendet.
+	\begin{enumerate}
+		\item Die Kurve \enquote{VOffset} auswählen
+		\item Measure $\rightarrow$ Mean
+	\end{enumerate}
+	
+	\minisec{CMRR}	
+	Datei: \emph{RC4558 - cmrr}
+	
+	Hier wurde ein erweitertes Messverfahren \cite{website:amp_psrr_cmrr_circuits} verwendet.
+	\begin{enumerate}
+		\item Die Kurven $V_{cm}$ und $V_{offset}$ auswählen.
+		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Peak To Peak $\Rightarrow 2\hat{V}_{cm}$
+		\item $ CMRR = 20 * log_{10} \frac{2\hat{V}_{cm}}{2\hat{V}_{offset}}$
+	\end{enumerate}
+	
+	\minisec{PSRR}	
+	Datei: \emph{RC4558 - psrr}
+	
+	Hier wurde ein erweitertes Messverfahren \cite{website:amp_psrr_cmrr_circuits} verwendet.
+	\begin{enumerate}
+		\item Die Kurven $V_{dd}$ und $V_{offset}$ auswählen.
+		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Peak To Peak $\Rightarrow 2\hat{V}_{dd}$
+		\item $ PSRR = 20 * log_{10} \frac{2\hat{V}_{dd}}{2\hat{V}_{offset}}$
+	\end{enumerate}
+	
+	\minisec{Open loop gain}	
+	Datei: \emph{RC4558 - olgain}
+	
+	Hier wurde ein erweitertes Messverfahren \cite{website:amp_psrr_cmrr_circuits} verwendet.
+	\begin{enumerate}
+		\item Die Kurve $Gain$ auswählen.
+		\item Measure $\rightarrow$ Maximum
+	\end{enumerate}
+	
+	
+	\minisec{Gain bandwidth product}
+	Datei: \emph{RC4558 - unity gain bandwidth}
+	\begin{enumerate}
+		\item Die Kurve $Gain$ auswählen
+		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Lowpass \SI{-3}{\decibel} (db Plot, auto) $\Rightarrow f_{3dB}$
+		\item $ GBP = A \cdot f_{3dB} = 10 \cdot f_{3dB} $
+	\end{enumerate}
+	
+	\minisec{Voltage swing}	
+	Datei: \emph{RC4558 - voltage swing}
+	\begin{enumerate}
+		\item Die Kurven $V_{out RL=100G}$, $V_{out RL=10k}$, $V_{out RL=2k}$ auswählen. $R_L=\SI{100}{\giga\ohm}$ simuliert den Leerlauf.
+		\item Measure $\rightarrow$ More Functions... $\rightarrow$ Peak To Peak $\Rightarrow 2\hat{V}$
+		\item $V_{swing} = \pm \frac{2\hat{V}}{2}$
 	\end{enumerate}
 
 \listoffigures
