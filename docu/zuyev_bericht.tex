@@ -78,7 +78,7 @@
 	
 	\section{Einführung}	
 	
-		Im Rahmen der Veranstaltung \enquote{Elektronik 2 / Schaltungstechnik} bei Prof. Dr. Leitis wird zur Anerkennung als Prüfungsleistung das Thema \enquote{Integrierende Analog-Digital Wandler} behandelt.
+		Im Rahmen der Veranstaltung \enquote{Elektronik 2 / Schaltungstechnik} bei Prof. Dr. Karsten Leitis wird zur Anerkennung als Prüfungsleistung das Thema \enquote{Integrierende Analog-Digital Wandler} behandelt.
 		
 		Hierbei wird das Verhalten der idealen Operationsverstärker (im Nachfolgendem OPAMP genannt) und realitätsnaher Modelle untersucht, insbesondere im Kontext der integrierierenden Analog/Digital Wandler.
 	
@@ -189,7 +189,7 @@
 		Aufbauend auf dem single-slope Wandler aus dem vorhergehendem Kapitel wird die Steuerlogik angepasst: der Zähler wird auf \SI{10}{\bit} mit einem Wertebereich von [0, 512] erweitert. Bit 9 signalisiert nun die Deintegrationsphase, Bit 10 wird als Reset-Signal verwendet.
 				
 		Zusäzlich wurden ein Eingangsmultiplexer, um zwischen $V_{ref} $und $V_{in} $ umzuschalten, und ein invertierender Verstärker verbaut.
-		Wird an diesen nun $V_{ref} $ geschaltet, so wird das SIgnal 1:1 am Integrierer anliegen. Dem $V_{in}$ Eingang ist allerdings ein \SI{3}{\kilo\ohm} Widerstand nachgeschaltet, dadurch agiert der Verstärker als Dämpfer mit einem Verstärkungsfaktor $ A = \frac{\SI{1}{\kilo\ohm}}{\SI{3}{\kilo\ohm} + \SI{1}{\kilo\ohm}} = \frac{1}{4}$ und passt den Bereich von $V_{in} $ auf $V_{ref} $ an. Somit ist eine konstante De- und Integrationsrate von \SI{1}{\volt\per\micro\second} gewährleistet.
+		Wird an diesen nun $V_{ref} $ geschaltet, so wird das Signal 1:1 am Integrierer anliegen. Dem $V_{in}$ Eingang ist allerdings ein \SI{3}{\kilo\ohm} Widerstand nachgeschaltet, dadurch agiert der Verstärker als Dämpfer mit einem Verstärkungsfaktor $ A = \frac{\SI{1}{\kilo\ohm}}{\SI{3}{\kilo\ohm} + \SI{1}{\kilo\ohm}} = \frac{1}{4}$ und passt den Bereich von $V_{in} $ auf $V_{ref} $ an. Somit ist eine konstante De- und Integrationsrate von \SI{1}{\volt\per\micro\second} gewährleistet.
 		
 		Da von nun an eine Auswertung des Integrators nur noch jeden zweiten Takt erfolgt, führt das zu Halbierung der Abtastrate und somit dem Nyquist-Theorem entsprechend zur Halbierung der möglichen Eingangsfrequenz - das kann man auf \cref{fig:dual-slope-ideal} gut erkennen, trotz gleicher Taktung werden ungefähr halb so viele Samples aufgenommen. Darüber hinaus macht sich ein zum Eingangssignal proportionaler Quantisierungsfehler bemerkbar, dieser ist mit dem Quantisierungsrauschen überlagert.
 		
@@ -242,7 +242,7 @@
 		
 		Die Versorgungsspannung wurde vorsichtshalber auf $\pm \SI{15}{\volt} $ erhöht, da dieser OpAmp kein Rail-To-Rail Verstärker ist und bis zu $\pm \SI{2}{\volt} $ Headroom aufweist. 
 		
-		Die Abtastrate konnte für beide Wandler-Variationen verfünffacht werden, weitere Erhöhung über den Faktor 5 hinaus führte zunächst zu einer Steigerung des Quantisierungsrauschens und im Anschluss zum Versagen - aufgrund der niedrigen Slew-Rate und zu hohen Frequenz werden wie in \cref{sec:single-slope-adc} beschrieben falsche Werte ermittelt. 
+		Die Abtastrate konnte für den Single-Slope-Wandler umd dein Faktor 10 erhöht und für den Dual-Slope-Wandler verfünffacht werden, eine weitere Erhöhung führte zunächst zu einer Steigerung des Quantisierungsrauschens und im Anschluss zum Versagen - aufgrund der niedrigen Slew-Rate und zu hohen Frequenz werden wie in \cref{sec:single-slope-adc} beschrieben falsche Werte ermittelt. 
 		
 		Auffällig ist der Verlauf des Quantisierungsrauschens im Vergleich zu den niedriger getakteten Pendants aus \cref{sec:single-slope-adc}: Im Falle des single-slope Wandlers, verändert sich der Verlauf sehr stark, wie in \cref{fig:single-slope-RC4558} zu sehen ist, und weist einen zum Eingangssignal proportionalen Quantisierungsfehler auf, ähnlich wie der idealisierte dual-slope Wandler.				
 				
@@ -266,7 +266,17 @@
 		
 		Der Aufbau behandelt keine Überschreitung der Eingangsspannung.  Dies hat eine Aufnahme zu niedriger Werte zur Folge. Denkbar wäre es, beim Überlauf des Zählers den Maximalwert ins Register zu übernehmen, falls der Komparator keine Überschneidung signalisiert hat. 
 		
-		Den Komparatorausgang direkt als Clock-Eingang für das Register zu verwenden kann gefährlich sein, da die Ausgangsspannung durchaus prellen könnte (Slew-Rate Überschwinger). Mäglich wäre es, den Komparator um einen Schmitt-Trigger\cite{website:schmitt_trigger_slewrate} mit einer zur Abtastfrequenz passenden Hysterese zu erweitern bzw umzuwandeln.
+		Den Komparatorausgang direkt als Clock-Eingang für das Register zu verwenden kann gefährlich sein, da es ein zusätzlicher asynchroner Eingang ist. Möglich wäre es, den Komparator um einen Schmitt-Trigger\cite{website:schmitt_trigger_slewrate} mit einer zur Abtastfrequenz passenden Hysterese zu erweitern bzw umzuwandeln und dann getaktet auszulesen.
+		
+		Zudem führte SIMetrix\texttrademark Version 5.60 vermehrt zu Schwierigkeiten wie 
+		\begin{itemize}
+			\item Konvergenzprobleme
+			\item Verfälschte Ergebnisse 
+			\item Probleme mit Digitalkomponenten
+			\item Probleme mit Bus-Rippern
+		\end{itemize}
+	
+		Die Konvergenzprobleme ließen sich für Operationsverstärker durch Wahl anderer Betriebsbereiche, $V_{bias} \neq 0$ oder $R_{out} >> 0$ vermeiden. In SIMetrix\texttrademark 8.00 lassen sich Konvergenzprobleme durch Einstellungen für die numerische Evaluation (\enquote{Simulator $\rightarrow$ Convergence options}) weitestgehend vermeiden.
 		
 	\section{Anhang}
 	
